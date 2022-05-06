@@ -1,3 +1,5 @@
+// Based on Example by the D3 Team (Mike Bostock) See License.txt
+
 function chart(data, width, height, types, color, location, drag, linkArc) {
     const links = data.links.map(d => Object.create(d));
     const nodes = data.nodes.map(d => Object.create(d));
