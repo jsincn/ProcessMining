@@ -3,7 +3,10 @@ import pandas as pd
 
 
 class XESParser:
-    parsed_logs = pd.DataFrame()
+
+
+    def __init__(self):
+        self.parsed_logs = pd.DataFrame()
 
     def read_xes(self, string):
         logs = ET.ElementTree(ET.fromstring(string))

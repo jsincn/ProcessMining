@@ -67,44 +67,6 @@ function chart(data, width, height, types, color, location, drag, linkArc) {
 }
 
 
-links = d3.csvParse("source,target,type\n" +
-    "a,ae,all\n" +
-    "ae,e,all\n" +
-    "b,bfc,all\n" +
-    "bfc,f,all\n" +
-    "bfc,c,all\n" +
-    "e,ef,all\n" +
-    "ef,f,all\n" +
-    "c,cd,all\n" +
-    "cd,d,all\n" +
-    "a,adb,all\n" +
-    "d,adb,all\n" +
-    "adb,b,all\n" +
-    "Start,a,all\n" +
-    "f,End,all"
-)
-
-loc_raw = d3.csvParse("loc,type\n" +
-    "a,trans\n" +
-    "b,trans\n" +
-    "e,trans\n" +
-    "f,trans\n" +
-    "c,trans\n" +
-    "d,trans\n" +
-    "Start,trans\n" +
-    "End,trans\n" +
-    "ae,pos\n" +
-    "bfc,pos\n" +
-    "ef,pos\n" +
-    "cd,pos\n" +
-    "adb,pos")
-
-
-types = Array.from(new Set(links.map(d => d.type)))
-nodes = ['']
-data = ({nodes: Array.from(loc_raw, (i) => ({id: i['loc'], type: i['type']})), links})
-height = 600
-
 function shape(type) {
     if (type = "trans") {
         return "square"
@@ -113,16 +75,28 @@ function shape(type) {
     }
 }
 
-color = d3.scaleOrdinal(types, d3.schemeCategory10)
-
 function linkArc(d) {
     // Calculate Radius for curved lines
     // const r = Math.hypot(d.target.x - d.source.x, d.target.y - d.source.y);
     const r = 0;
     if (d.target.type === "trans") {
+        // calculate correct point
+        alpha = Math.tan((d.source.y-d.target.y)/(d.source.x-d.target.x))
+        if (d.source.x <= d.target.x){
+            qx = d.target.x - 5
+        } else {
+            qx = d.target.x + 5
+        }
+        if (d.source.y <= d.target.y){
+            qy = d.target.y - Math.atan(alpha)*5
+        } else {
+            qy = d.target.y + Math.atan(alpha)*5
+        }
+
+
         return `
         M${d.source.x},${d.source.y}
-        A${r},${r} 0 0,1 ${d.target.x},${d.target.y}
+        A${r},${r} 0 0,1 ${qx},${qy}
   `;
 
     }
@@ -156,4 +130,72 @@ drag = simulation => {
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended);
+}
+
+function removeDuplicates(arr){
+    return arr.filter((item,
+            index) => arr.indexOf(item) === index);
+}
+
+function loadPetrinet(locations, transitions) {
+
+    let links = removeDuplicates(d3.csvParse(transitions))
+
+    let loc_raw = removeDuplicates(d3.csvParse(locations))
+    console.log(loc_raw)
+
+    let types = Array.from(new Set(links.map(d => d.type)))
+    let nodes = ['']
+    let data = ({nodes: Array.from(loc_raw, (i) => ({id: i['loc'], type: i['type']})), links})
+    let height = 600
+    let color = d3.scaleOrdinal(types, d3.schemeCategory10)
+        // append the svg object to the body of the page
+    let c = chart(data, 600, 400, types, color, location, drag, linkArc)
+
+
+    console.log(c)
+    document.getElementById("output").innerHTML=""
+    document.getElementById("output").append(c)
+
+
+    d3.selectAll(".trans").append("rect")
+        .attr("width", 20)
+        .attr("height", 20)
+        .attr("stroke", 'black')
+        .attr("fill", 'white')
+        .attr("x", -10)
+        .attr("y", -10)
+        .attr("class", function (d) {
+            return "node type " + d.type
+        });
+
+    d3.selectAll(".pos").append("circle")
+        .attr("stroke", "black")
+        .attr("stroke-width", 1.5)
+        .attr("fill", 'white')
+        .attr("r", 4);
+
+    d3.selectAll(".se").append("circle")
+        .attr("stroke", "black")
+        .attr("stroke-width", 1.5)
+        .attr("fill", 'black')
+        .attr("r", 6);
+
+
+    d3.selectAll(".se").append("text")
+        .attr("x", 6)
+        .attr("y", 12)
+        .text(d => d.id)
+        .clone(true).lower()
+        .attr("fill", "none")
+        .attr("stroke", "white")
+        .attr("stroke-width", 3);
+
+
+    d3.selectAll(".trans").append("text")
+        .text(d => d.id)
+        .clone(true).lower()
+        .attr("fill", "none")
+        .attr("stroke", "white")
+        .attr("stroke-width", 3);
 }

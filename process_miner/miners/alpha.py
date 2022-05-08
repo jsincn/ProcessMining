@@ -8,18 +8,21 @@ def powerset(iterable):
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
 
+
 def jointuple(tpl, sep="", lbr="", rbr=""):
     return sep.join(lbr + jointuple(x) + rbr if isinstance(x, tuple) else str(x) for x in tpl)
 
 
 class AlphaMiner:
-    L = []
-    FL = []
-    TL = []
-    TI = []
-    TO = []
-    XL = []
-    YL = []
+    def __init__(self):
+        self.L = []
+        self.FL = []
+        self.TL = []
+        self.TI = []
+        self.TO = []
+        self.XL = []
+        self.YL = []
+        self.combinations = []
 
     def run(self, traces_df):
         trace_names = traces_df.trace_name.unique()
@@ -67,12 +70,11 @@ class AlphaMiner:
         self.TO = list(set(self.TO))
 
         side_combinations = list(powerset(alphabet))
-        combinations = list(itertools.product(side_combinations, side_combinations))
+        self.combinations = list(itertools.product(side_combinations, side_combinations))
 
-        for combination in combinations:
+        for combination in self.combinations:
             A = combination[0]
             B = combination[1]
-            print(combination, end="")
             valid = True
             if len(A) == 0 or len(B) == 0:
                 # print ("EMPTY SET")
@@ -90,7 +92,6 @@ class AlphaMiner:
                 for b2 in B:
                     if (b1, b2) not in choices:
                         valid = False
-            print(valid)
             if valid:
                 self.XL.append((A, B))
 
@@ -106,7 +107,7 @@ class AlphaMiner:
                 self.YL.append(combination)
 
         for combination in self.YL:
-            print(combination)
+            # print(combination)
             for a in combination[0]:
                 self.FL.append((a, combination))
 
@@ -124,7 +125,10 @@ class AlphaMiner:
     def get_location_csv(self):
         csv = "loc,type\n"
         for t in self.TL:
-            csv = csv + t + ",trans\n"
+            if t == "Start" or t == "End":
+                csv = csv + t + ",se\n"
+            else:
+                csv = csv + t + ",trans\n"
         for y in self.YL:
             csv = csv + jointuple(y) + ",pos\n"
         return csv
@@ -134,3 +138,7 @@ class AlphaMiner:
         for f in self.FL:
             csv = csv + jointuple(f[0]) + "," + jointuple(f[1]) + ",all\n"
         return csv
+
+    def get_meta(self):
+        meta = {'possibilities': {'value': len(self.combinations), 'name': "Combinations for XL"}}
+        return meta
