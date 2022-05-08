@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ET
 import pandas as pd
 
-class xes_parser:
 
+class XESParser:
     parsed_logs = pd.DataFrame()
 
     def read_xes(self, string):
@@ -41,4 +41,3 @@ class xes_parser:
 
     def get_parsed_logs(self):
         return self.parsed_logs
-
