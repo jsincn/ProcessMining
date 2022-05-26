@@ -138,6 +138,8 @@ function removeDuplicates(arr){
 }
 
 function loadPetrinet(locations, transitions) {
+    console.log(locations);
+     console.log(transitions);
 
     let links = removeDuplicates(d3.csvParse(transitions))
 
