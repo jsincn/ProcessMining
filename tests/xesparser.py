@@ -58,6 +58,24 @@ class TestXesParser(unittest.TestCase):
         l.sort()
         self.assertEqual(l, oracle)
 
+    def testL4(self):
+        filepath = "resources/L4.xes"
+        test_xml_string = self.load_test_file(filepath)
+        parser = XESParser()
+        parser.read_xes(test_xml_string)
+        traces_df = parser.get_parsed_logs()
+        l = self.generate_l(traces_df)
+        oracle_dict = [
+            (tuple('acd'), 45),
+            (tuple('bcd'), 42),
+            (tuple('ace'), 38),
+            (tuple('bce'), 22)
+        ]
+        oracle = self.generate_oracle(oracle_dict)
+        oracle.sort()
+        l.sort()
+        self.assertEqual(l, oracle)
+
     @staticmethod
     def load_test_file(filepath):
         f = open(filepath, "r")
