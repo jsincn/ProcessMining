@@ -1,0 +1,9 @@
+.tooltip-petrinet {
+    position: absolute;
+    padding: .5rem;
+    color: #313639;
+    border: 1px solid #313639;
+    pointer-events: none;
+    background-color: #e74c3c;
+    border-radius: 5px 5px;
+}

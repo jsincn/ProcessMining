@@ -24,7 +24,8 @@ def upload_xes():
         return "File not attached", 400
     file = request.files['file']
     algorithm = request.values['algorithm']
-    mining_handler = MiningHandler(algorithm, file)
+    lifecycleTransition = request.values['lifecycleTransition']
+    mining_handler = MiningHandler(algorithm, file, lifecycleTransition)
     mining_handler.run()
     if mining_handler.success:
         response = mining_handler.prepare_response()

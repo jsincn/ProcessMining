@@ -1,0 +1,17 @@
+source,target,type
+b,bde,all
+bde,d,all
+bde,e,all
+c,cde,all
+cde,d,all
+cde,e,all
+e,ef,all
+ef,f,all
+a,afb,all
+f,afb,all
+afb,b,all
+a,afc,all
+f,afc,all
+afc,c,all
+Start,a,all
+d,End,all

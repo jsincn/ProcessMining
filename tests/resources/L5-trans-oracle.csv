@@ -1,0 +1,15 @@
+source,target,type
+a,ae,all
+ae,e,all
+b,bfc,all
+bfc,f,all
+bfc,c,all
+e,ef,all
+ef,f,all
+c,cd,all
+cd,d,all
+a,adb,all
+d,adb,all
+adb,b,all
+Start,a,all
+f,End,all

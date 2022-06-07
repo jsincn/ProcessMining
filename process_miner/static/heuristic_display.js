@@ -43,8 +43,13 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, alpha
 
 function enableThresholdSliders(maxOccurrences) {
     d3.selectAll(".heuristicThresholds").attr('disabled', null);
-    d3.selectAll(".occurrenceThreshold").attr('value', maxOccurrences);
+    d3.selectAll(".occurrenceThreshold").attr('max', maxOccurrences);
 }
+
+function disableThresholdSliders() {
+    d3.selectAll(".heuristicThresholds").attr('disabled', true);
+}
+
 
 $("#occurrenceThresholdSlider").change(function () {
     $("#occurrenceThresholdText").get(0).value = $("#occurrenceThresholdSlider").get(0).value;

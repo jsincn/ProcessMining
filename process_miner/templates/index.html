@@ -11,6 +11,7 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/11.0.2/css/bootstrap-slider.css"
           integrity="sha512-SZgE3m1he0aEF3tIxxnz/3mXu/u/wlMNxQSnE0Cni9j/O8Gs+TjM9tm1NX34nRQ7GiLwUEzwuE3Wv2FLz2667w=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="/static/custom.css">
 </head>
 <body>
 <header class="p-3 bg-dark text-white">
@@ -120,7 +121,7 @@
                     <h6>Advanced</h6>
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon3">lifecycle:transition=</span>
-                        <input type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+                        <input type="text" class="form-control" id="lifecycleTransition" aria-describedby="basic-addon3">
                     </div>
 
                     <div class="form-check form-switch">
@@ -150,15 +151,18 @@
     <script src="/static/statistics_table.js"></script>
     <script src="/static/heuristic_display.js"></script>
     <script>
+        window.debugState = false;
         $(document).ready(function () {
             $("#upload_button").click(function () {
 
                 var fd = new FormData();
                 var files = $('#xes_file')[0].files;
                 var algorithm = $('#algorithmSelect').get(0).options[algorithmSelect.selectedIndex].text;
+                var lifecycleTransition = $('#lifecycleTransition').get(0).value;
                 if (files.length > 0) {
                     fd.append('file', files[0]);
                     fd.append('algorithm', algorithm);
+                    fd.append('lifecycleTransition', lifecycleTransition)
                     $.ajax({
                         url: '/api/upload',
                         type: 'post',
@@ -166,8 +170,12 @@
                         contentType: false,
                         processData: false,
                         success: function (response) {
+                            window.legend = [];
+                            window.nodeStats = response.nodeStats;
                             if (response.algorithm === "Alpha Miner") {
+
                                 loadPetrinet(response.locations, response.transitions);
+                                disableThresholdSliders();
                                 updateTable(response);
                                 console.log(response);
                             } else {
@@ -176,8 +184,9 @@
                                 window.alphabet = response.alphabet;
                                 window.startNodes = response.start;
                                 window.endNodes = response.end;
-                                updateHeuristicDisplay(response.dependencyMeasureMatrix, response.successionMatrix, response.alphabet, response.start, response.end, 2, 0.8);
                                 enableThresholdSliders(response.maxOccurrences);
+                                updateHeuristicDisplay(response.dependencyMeasureMatrix, response.successionMatrix, response.alphabet, response.start, response.end, 2, 0.8);
+
                                 updateTable(response);
                                 var figure = JSON.parse(response.mostCommonStep);
                                 Plotly.newPlot('mostCommonNode', figure.data, figure.layout);

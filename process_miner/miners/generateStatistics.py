@@ -26,7 +26,6 @@ class StatisticsGenerator:
         return graph
 
     def generate_succession_heatmap(self):
-
         direct_successions_hm = []
         for trace in self.L:
             for i in range(0, len(trace) - 1):
@@ -56,3 +55,19 @@ class StatisticsGenerator:
             colorscale='Inferno'))
         graph = pio.to_json(fig)
         return graph
+
+    def generateTransitionInformation(self):
+        result = {}
+        for i in self.traces_df['concept:name'].unique():
+            filtered_df = self.traces_df[self.traces_df['concept:name'] == i]
+            countOccurences = len(filtered_df.index)
+            latestOccurence = filtered_df['time:timestamp'].max()
+            mostCommonTransition = str(filtered_df['lifecycle:transition'].mode())
+            result[i] = {
+                'name': i,
+                'countOccurence': countOccurences,
+                'latestOccurence': latestOccurence,
+                'mostCommonTransition': mostCommonTransition
+            }
+        print(result)
+        return result

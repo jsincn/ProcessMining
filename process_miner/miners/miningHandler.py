@@ -11,7 +11,7 @@ from process_miner.miners.xesparser import XESParser
 
 class MiningHandler:
 
-    def __init__(self, algorithm, file):
+    def __init__(self, algorithm, file, lifecycleTransition):
         self.miner = None
         self.file = file
         self.algorithm = algorithm
@@ -19,6 +19,7 @@ class MiningHandler:
         self.stop = 0
         self.start = 0
         self.stats = None
+        self.lifecycleTransition = lifecycleTransition
 
     def run(self):
         # runs the algorithm
@@ -27,6 +28,9 @@ class MiningHandler:
             parser = XESParser()
             if parser.read_xes(self.file.read()):
                 traces_df = parser.get_parsed_logs()
+                # filter lifecycle transition
+                if self.lifecycleTransition != "":
+                    traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
                 self.miner = AlphaMiner()
                 self.miner.run(traces_df)
                 self.stop = timeit.default_timer()
@@ -38,6 +42,9 @@ class MiningHandler:
             parser = XESParser()
             if parser.read_xes(self.file.read()):
                 traces_df = parser.get_parsed_logs()
+                # filter lifecycle transition
+                if self.lifecycleTransition != "":
+                    traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
                 self.miner = HeuristicMiner()
                 self.miner.run(traces_df)
                 self.stop = timeit.default_timer()
@@ -49,6 +56,9 @@ class MiningHandler:
             response = {'locations': self.miner.get_location_csv(), 'transitions': self.miner.get_transition_csv(),
                         'filename': secure_filename(self.file.filename), 'runtime': self.stop - self.start,
                         'algorithm': "Alpha Miner", 'cache': False, 'timestamp': datetime.now(),
+                        'mostCommonStep': self.stats.generate_most_common_step(),
+                        'successionHeatmap': self.stats.generate_succession_heatmap(),
+                        'nodeStats': self.stats.generateTransitionInformation(),
                         'meta': self.miner.get_meta()}
             return response
         elif self.algorithm == "Heuristic Miner":
@@ -62,5 +72,6 @@ class MiningHandler:
                         'algorithm': "Heuristic Miner", 'cache': False, 'timestamp': datetime.now(),
                         'mostCommonStep': self.stats.generate_most_common_step(),
                         'successionHeatmap': self.stats.generate_succession_heatmap(),
+                        'nodeStats': self.stats.generateTransitionInformation(),
                         'meta': self.miner.get_meta()}
             return response
