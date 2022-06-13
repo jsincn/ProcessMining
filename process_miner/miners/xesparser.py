@@ -11,9 +11,10 @@ class XESParser:
     def read_xes(self, string):
         logs = ET.ElementTree(ET.fromstring(string))
 
+
         root = logs.getroot()
         traces = []
-
+        print(root)
         for child in root:
             if child.tag == "{http://www.xes-standard.org/}trace":
                 traces.append(child)
@@ -37,6 +38,7 @@ class XESParser:
             trace_df['trace_name'] = trace_name
             traces_df = pd.concat([traces_df, trace_df])
 
+        print(traces_df)
         traces_df = traces_df.sort_values(["trace_name", "time:timestamp"], ascending=True)
 
         self.parsed_logs = traces_df

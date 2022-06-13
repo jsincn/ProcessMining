@@ -68,6 +68,7 @@ class StatisticsGenerator:
         return graph
 
     def generate_average_execution_per_chain_type_over_time(self):
+        print(self.traces_df)
         if not {'concept:name', 'time:timestamp'}.issubset(self.traces_df.columns):
             print("Can't render")
             # fig = px.bar(proc_df, x="concept:name", y="count")
@@ -87,8 +88,12 @@ class StatisticsGenerator:
 
         time_df = time_df.merge(l_df, on="trace_name")
         # graph = pio.to_json(fig)
-        time_df = time_df[['concept:name', 'start', 'delta']].groupby(['concept:name', 'start']).median().reset_index()
-        time_df['delta_sec'] = time_df['delta'].dt.total_seconds()
+        print(time_df[['concept:name', 'start', 'delta']])
+
+        time_df['delta_sec'] = time_df['delta'].dt.total_seconds().astype(int)
+        time_df.info();
+        time_df = time_df[['concept:name', 'start', 'delta_sec']].groupby(['concept:name', 'start']).median().reset_index()
+
 
         # Create layout. With layout you can customize plotly plo
         fig = px.bar(time_df, x="start", y="delta_sec", color="concept:name")
