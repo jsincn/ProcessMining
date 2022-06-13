@@ -12,7 +12,7 @@ class StatisticsGenerator:
         self.L = L
         self.traces_df = traces_df
         pio.templates["ppm"] = go.layout.Template(
-            layout_colorway=['#FFC107', '#DB4437', '#F4B400']
+            layout_colorway=['#FFC107', '#DB4437', '#2980b9', '#8e44ad', '#2c3e50', '#7f8c8d', '#c0392b']
         )
         pio.templates.default = "ppm"
 
@@ -20,7 +20,6 @@ class StatisticsGenerator:
         proc_df = self.traces_df[['concept:name']]
         proc_df = proc_df.assign(count=1)
         proc_df = proc_df.groupby("concept:name").sum().reset_index()
-        proc_df.head(10)
         fig = px.bar(proc_df, x="concept:name", y="count")
         graph = pio.to_json(fig)
         return graph
@@ -50,9 +49,55 @@ class StatisticsGenerator:
             y=df_successions['right'],
             z=df_successions['count'],
             type='heatmap',
-            text=df_successions['count'],texttemplate="%{text}",
-                    textfont={"size":20},
+            text=df_successions['count'], texttemplate="%{text}",
+            textfont={"size": 20},
             colorscale='Inferno'))
+        graph = pio.to_json(fig)
+        return graph
+
+    def generate_occurrence_histogram(self):
+        if not {'concept:name', 'time:timestamp', 'lifecycle:transition'}.issubset(self.traces_df.columns):
+            print("Can't render")
+            # fig = px.bar(proc_df, x="concept:name", y="count")
+            # graph = pio.to_json(fig)
+            # return graph
+        time_df = self.traces_df[['concept:name', 'time:timestamp', 'lifecycle:transition']]
+        time_df['timestamp'] = pd.to_datetime(time_df['time:timestamp'])
+        fig = px.histogram(time_df, x="time:timestamp", color="concept:name")
+        graph = pio.to_json(fig)
+        return graph
+
+    def generate_average_execution_per_chain_type_over_time(self):
+        if not {'concept:name', 'time:timestamp'}.issubset(self.traces_df.columns):
+            print("Can't render")
+            # fig = px.bar(proc_df, x="concept:name", y="count")
+            # graph = pio.to_json(fig)
+            # return graph
+        # Average execution time per chain type over time
+        time_df = self.traces_df[['trace_name', 'time:timestamp']]
+        time_df['time:timestamp'] = pd.to_datetime(time_df['time:timestamp'])
+        time_df = time_df.groupby(['trace_name']).agg(lambda x: (x.max(), x.min())).reset_index()
+
+        time_df['start'] = time_df['time:timestamp'].transform(lambda x: x[0])
+        time_df['end'] = time_df['time:timestamp'].transform(lambda x: x[1])
+        time_df['delta'] = time_df['start'] - time_df['end']
+
+        l_df = self.traces_df[['trace_name', 'concept:name']]
+        l_df = l_df.groupby('trace_name').agg(lambda x: tuple(x))
+
+        time_df = time_df.merge(l_df, on="trace_name")
+        # graph = pio.to_json(fig)
+        time_df = time_df[['concept:name', 'start', 'delta']].groupby(['concept:name', 'start']).median().reset_index()
+        time_df['delta_sec'] = time_df['delta'].dt.total_seconds()
+
+        # Create layout. With layout you can customize plotly plo
+        fig = px.bar(time_df, x="start", y="delta_sec", color="concept:name")
+        fig.update_layout(legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01
+        ))
         graph = pio.to_json(fig)
         return graph
 

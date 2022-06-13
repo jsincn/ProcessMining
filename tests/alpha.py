@@ -9,7 +9,7 @@ from io import StringIO
 class AlphaMinerTests(unittest.TestCase):
 
     def test(self):
-        testFiles = ['L1', 'L2', 'L3']
+        testFiles = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7']
         for i in testFiles:
             self.runTest(i)
 

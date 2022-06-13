@@ -58,6 +58,8 @@ class MiningHandler:
                         'algorithm': "Alpha Miner", 'cache': False, 'timestamp': datetime.now(),
                         'mostCommonStep': self.stats.generate_most_common_step(),
                         'successionHeatmap': self.stats.generate_succession_heatmap(),
+                        'occurrenceHistogram': self.stats.generate_occurrence_histogram(),
+                        'averageExecutionChainTypeTime': self.stats.generate_average_execution_per_chain_type_over_time(),
                         'nodeStats': self.stats.generateTransitionInformation(),
                         'meta': self.miner.get_meta()}
             return response
@@ -72,6 +74,8 @@ class MiningHandler:
                         'algorithm': "Heuristic Miner", 'cache': False, 'timestamp': datetime.now(),
                         'mostCommonStep': self.stats.generate_most_common_step(),
                         'successionHeatmap': self.stats.generate_succession_heatmap(),
+                        'occurrenceHistogram': self.stats.generate_occurrence_histogram(),
+                        'averageExecutionChainTypeTime': self.stats.generate_average_execution_per_chain_type_over_time(),
                         'nodeStats': self.stats.generateTransitionInformation(),
                         'meta': self.miner.get_meta()}
             return response

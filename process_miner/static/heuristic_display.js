@@ -1,5 +1,6 @@
 function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, alphabet, start, end, occurrence_threshold, dependency_threshold) {
     console.log(start);
+    window.legend = [];
     var transitions = "source,target,type\n";
     var locations = "loc,type\n";
     var locs = []
@@ -52,6 +53,7 @@ function disableThresholdSliders() {
 
 
 $("#occurrenceThresholdSlider").change(function () {
+
     $("#occurrenceThresholdText").get(0).value = $("#occurrenceThresholdSlider").get(0).value;
     updateHeuristicDisplay(window.dependencyMeasureMatrix, window.successionMatrix, window.alphabet, window.startNodes, window.endNodes, $("#occurrenceThresholdText").get(0).value, $("#dependencyThresholdText").get(0).value)
 

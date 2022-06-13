@@ -234,7 +234,7 @@ function loadPetrinet(locations, transitions) {
         .attr("y", 2)
         .text(function (d) {
             if (d.id.length <= 2) {
-                return d => d.id
+                return d.id;
             } else {
                 window.legend.push(d.id);
                 return "q" + window.legend.length;
