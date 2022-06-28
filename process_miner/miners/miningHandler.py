@@ -59,6 +59,7 @@ class MiningHandler:
                         'mostCommonStep': self.stats.generate_most_common_step(),
                         'successionHeatmap': self.stats.generate_succession_heatmap(),
                         'occurrenceHistogram': self.stats.generate_occurrence_histogram(),
+                        'listLifecycleTransitions': self.stats.getListOfTransitions(),
                         'averageExecutionChainTypeTime': self.stats.generate_average_execution_per_chain_type_over_time(),
                         'nodeStats': self.stats.generateTransitionInformation(),
                         'meta': self.miner.get_meta()}
@@ -75,6 +76,7 @@ class MiningHandler:
                         'mostCommonStep': self.stats.generate_most_common_step(),
                         'successionHeatmap': self.stats.generate_succession_heatmap(),
                         'occurrenceHistogram': self.stats.generate_occurrence_histogram(),
+                        'listLifecycleTransitions': self.stats.getListOfTransitions(),
                         'averageExecutionChainTypeTime': self.stats.generate_average_execution_per_chain_type_over_time(),
                         'nodeStats': self.stats.generateTransitionInformation(),
                         'meta': self.miner.get_meta()}

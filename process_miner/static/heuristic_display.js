@@ -5,7 +5,6 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, alpha
     var locations = "loc,type\n";
     var locs = []
     for (const l of alphabet) {
-
         for (const r of alphabet) {
             if (successionMatrix[l][r] >= occurrence_threshold && dependencyMeasureMatrix[l][r] >= dependency_threshold) {
                 if (!locs.includes(l)) {

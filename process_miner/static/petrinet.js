@@ -154,7 +154,6 @@ function loadPetrinet(locations, transitions) {
     // append the svg object to the body of the page
     let c = chart(data, 600, 400, types, color, location, drag, linkArc)
 
-
     console.log(c)
     document.getElementById("output").innerHTML = ""
     document.getElementById("output").append(c)

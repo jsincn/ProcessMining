@@ -3,6 +3,7 @@ function updateTable(response){
     $('#timestamp_run').text(response['timestamp']);
     $('#algorithm_run').text(response['algorithm']);
     $('#filename_run').text(response['filename']);
+    $('#lifecycle_transitions').text(response['listLifecycleTransitions']);
     $('#runtime_run').text(Math.round((response['runtime'] + Number.EPSILON) * 100) / 100 + " Seconds");
     $('#algorithm_metadata_table').html("");
     for (const property in response['meta']) {

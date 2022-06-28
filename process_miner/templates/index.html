@@ -46,6 +46,10 @@
         </div>
         <div class="col-4">
             <h3>View Controls</h3>
+            <a id="link">Test</a>
+            <button type="button" class="btn btn-warning" id="svg_download">
+                Download SVG
+            </button>
             <label for="dependencyThresholdSlider" class="form-label heuristicThresholds">Dependency Threshold: <input
                     type="text" id="dependencyThresholdText" class="heuristicThresholds" style="border:None" value="0.7"
                     disabled></label>
@@ -59,7 +63,7 @@
                    class="form-range heuristicThresholds occurrenceThreshold" min="1" max="50" step="1.0" value="2"
                    disabled>
 
-                       <h3>General Metadata</h3>
+            <h3>General Metadata</h3>
             <table class="table table-dark">
                 <tbody>
                 <tr>
@@ -73,6 +77,10 @@
                 <tr>
                     <td colspan="2">Runtime</td>
                     <td id="runtime_run">0.1 sec</td>
+                </tr>
+                <tr>
+                    <td colspan="2">Lifecycle Transitions</td>
+                    <td id="lifecycle_transitions">start, complete</td>
                 </tr>
                 <tr>
                     <td colspan="2">Timestamp</td>

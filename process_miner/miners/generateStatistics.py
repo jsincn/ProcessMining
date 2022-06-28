@@ -121,3 +121,6 @@ class StatisticsGenerator:
             }
         print(result)
         return result
+
+    def getListOfTransitions(self):
+        return list(self.traces_df['lifecycle:transition'].unique())

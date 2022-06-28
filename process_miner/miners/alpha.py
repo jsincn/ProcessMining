@@ -3,13 +3,24 @@ from itertools import chain, combinations
 import itertools
 
 
-def powerset(iterable):
-    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"""
+def powerset(iterable: object) -> object:
+    """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
+    :param iterable:
+    :return:
+    """
     s = list(iterable)
     return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
 
 
 def jointuple(tpl, sep="", lbr="", rbr=""):
+    """
+    Used to generate
+    :param tpl: Tuple
+    :param sep: Char of separator that may be added
+    :param lbr: Left bracket optional
+    :param rbr: Right bracket optional
+    :return:
+    """
     return sep.join(lbr + jointuple(x) + rbr if isinstance(x, tuple) else str(x) for x in tpl)
 
 
