@@ -9,14 +9,20 @@ import plotly.graph_objects as go
 class StatisticsGenerator:
 
     def __init__(self, traces_df, L):
+        """
+        :param traces_df: pd.DataFrame
+        :param L: List
+        """
         self.L = L
         self.traces_df = traces_df
+        # Sets the colors for the plotly statistics
         pio.templates["ppm"] = go.layout.Template(
             layout_colorway=['#FFC107', '#DB4437', '#2980b9', '#8e44ad', '#2c3e50', '#7f8c8d', '#c0392b']
         )
         pio.templates.default = "ppm"
 
     def generate_most_common_step(self):
+        # Generates the most common step statistics and returns it as JSON
         proc_df = self.traces_df[['concept:name']]
         proc_df = proc_df.assign(count=1)
         proc_df = proc_df.groupby("concept:name").sum().reset_index()
@@ -25,6 +31,7 @@ class StatisticsGenerator:
         return graph
 
     def generate_succession_heatmap(self):
+        # Generates the succession heatmap and returns it as json
         direct_successions_hm = []
         for trace in self.L:
             for i in range(0, len(trace) - 1):
@@ -56,11 +63,10 @@ class StatisticsGenerator:
         return graph
 
     def generate_occurrence_histogram(self):
+        # Generate occurrence histogram and return as JSON using the ploty histogram function
         if not {'concept:name', 'time:timestamp', 'lifecycle:transition'}.issubset(self.traces_df.columns):
             print("Can't render")
-            # fig = px.bar(proc_df, x="concept:name", y="count")
-            # graph = pio.to_json(fig)
-            # return graph
+            return ""
         time_df = self.traces_df[['concept:name', 'time:timestamp', 'lifecycle:transition']]
         time_df['timestamp'] = pd.to_datetime(time_df['time:timestamp'])
         fig = px.histogram(time_df, x="time:timestamp", color="concept:name")
@@ -68,13 +74,12 @@ class StatisticsGenerator:
         return graph
 
     def generate_average_execution_per_chain_type_over_time(self):
+        # Generate average execution time per chain over time and return as JSON
+        # Mostly some dataframe transformations, that's it
         print(self.traces_df)
         if not {'concept:name', 'time:timestamp'}.issubset(self.traces_df.columns):
             print("Can't render")
-            # fig = px.bar(proc_df, x="concept:name", y="count")
-            # graph = pio.to_json(fig)
-            # return graph
-        # Average execution time per chain type over time
+            return ""
         time_df = self.traces_df[['trace_name', 'time:timestamp']]
         time_df['time:timestamp'] = pd.to_datetime(time_df['time:timestamp'])
         time_df = time_df.groupby(['trace_name']).agg(lambda x: (x.max(), x.min())).reset_index()
@@ -107,6 +112,7 @@ class StatisticsGenerator:
         return graph
 
     def generateTransitionInformation(self):
+        # Generate lifecycle:transition information
         result = {}
         for i in self.traces_df['concept:name'].unique():
             filtered_df = self.traces_df[self.traces_df['concept:name'] == i]

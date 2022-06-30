@@ -14,12 +14,13 @@ def powerset(iterable: object) -> object:
 
 def jointuple(tpl, sep="", lbr="", rbr=""):
     """
-    Used to generate
+    Used to generate names for places by joining the affected transition names
+    Based on https://stackoverflow.com/questions/47795792/how-to-deep-join-a-tuple-into-a-string
     :param tpl: Tuple
     :param sep: Char of separator that may be added
     :param lbr: Left bracket optional
     :param rbr: Right bracket optional
-    :return:
+    :return: String
     """
     return sep.join(lbr + jointuple(x) + rbr if isinstance(x, tuple) else str(x) for x in tpl)
 
@@ -121,19 +122,23 @@ class AlphaMiner:
             # print(combination)
             for a in combination[0]:
                 self.FL.append((a, combination))
-
             for b in combination[1]:
                 self.FL.append((combination, b))
 
+        # Add start transitions
         for start in self.TI:
             self.FL.append(("Start", start))
-
         for end in self.TO:
             self.FL.append((end, "End"))
+        # Add start places
         self.TL.append("Start")
         self.TL.append("End")
 
     def get_location_csv(self):
+        """
+        Generates a csv string of the locations
+        :return:
+        """
         csv = "loc,type\n"
         for t in self.TL:
             if t == "Start" or t == "End":
@@ -145,11 +150,19 @@ class AlphaMiner:
         return csv
 
     def get_transition_csv(self):
+        """
+        Generates a csv string of the transitions
+        :return: String
+        """
         csv = "source,target,type\n"
         for f in self.FL:
             csv = csv + jointuple(f[0]) + "," + jointuple(f[1]) + ",all\n"
         return csv
 
     def get_meta(self):
+        """
+        Generates meta data about the algorithm execution
+        :return: dict
+        """
         meta = {'possibilities': {'value': len(self.combinations), 'name': "Combinations for XL"}}
         return meta
