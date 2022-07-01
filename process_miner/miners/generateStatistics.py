@@ -96,7 +96,7 @@ class StatisticsGenerator:
         print(time_df[['concept:name', 'start', 'delta']])
 
         time_df['delta_sec'] = time_df['delta'].dt.total_seconds().astype(int)
-        time_df.info();
+        time_df.info()
         time_df = time_df[['concept:name', 'start', 'delta_sec']].groupby(['concept:name', 'start']).median().reset_index()
 
 

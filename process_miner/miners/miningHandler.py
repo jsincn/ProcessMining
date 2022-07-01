@@ -73,6 +73,7 @@ class MiningHandler:
                         'maxOccurrences': self.miner.get_max_occurrences(),
                         'filename': secure_filename(self.file.filename), 'runtime': self.stop - self.start,
                         'algorithm': "Heuristic Miner", 'cache': False, 'timestamp': datetime.now(),
+                        'l': self.miner.get_l(),
                         'mostCommonStep': self.stats.generate_most_common_step(),
                         'successionHeatmap': self.stats.generate_succession_heatmap(),
                         'occurrenceHistogram': self.stats.generate_occurrence_histogram(),

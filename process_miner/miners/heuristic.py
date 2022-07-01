@@ -72,6 +72,9 @@ class HeuristicMiner:
             self.TO.append(i[len(i) - 1])
         self.TO = list(set(self.TO))
 
+    def get_l(self):
+        return self.L
+
     def get_succession_matrix(self):
         return self.succession_matrix.to_dict('index')
 

@@ -12,7 +12,7 @@ function chart(data, width, height, types, color, location, drag, linkArc) {
 
     const svg = d3.create("svg")
         .attr("viewBox", [-width / 2, -height / 2, width, height])
-        .style("font", "12px sans-serif");
+        .style("font", "12px sans-serif").attr("id", "svgCanvas");
 
     // Per-type markers, as they don't inherit styles.
     svg.append("defs").selectAll("marker")
