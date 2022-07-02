@@ -37,7 +37,7 @@ class StatisticsGenerator:
             for i in range(0, len(trace) - 1):
                 direct_successions_hm.append((trace[i], trace[i + 1]))
 
-        print(direct_successions_hm)
+        #print(direct_successions_hm)
 
         direct_successions_hm_str = []
         for i in direct_successions_hm:
@@ -49,7 +49,7 @@ class StatisticsGenerator:
 
         df_successions = df_successions[['left', 'right', 'count']]
         df_successions = df_successions.groupby(['left', 'right']).sum().reset_index()
-        print(df_successions)
+        #print(df_successions)
 
         fig = go.Figure(data=go.Heatmap(
             x=df_successions['left'],
@@ -76,7 +76,7 @@ class StatisticsGenerator:
     def generate_average_execution_per_chain_type_over_time(self):
         # Generate average execution time per chain over time and return as JSON
         # Mostly some dataframe transformations, that's it
-        print(self.traces_df)
+        #print(self.traces_df)
         if not {'concept:name', 'time:timestamp'}.issubset(self.traces_df.columns):
             print("Can't render")
             return ""
@@ -93,10 +93,10 @@ class StatisticsGenerator:
 
         time_df = time_df.merge(l_df, on="trace_name")
         # graph = pio.to_json(fig)
-        print(time_df[['concept:name', 'start', 'delta']])
+        #print(time_df[['concept:name', 'start', 'delta']])
 
         time_df['delta_sec'] = time_df['delta'].dt.total_seconds().astype(int)
-        time_df.info()
+        #time_df.info()
         time_df = time_df[['concept:name', 'start', 'delta_sec']].groupby(['concept:name', 'start']).median().reset_index()
 
 
@@ -125,7 +125,7 @@ class StatisticsGenerator:
                 'latestOccurence': latestOccurence,
                 'mostCommonTransition': mostCommonTransition
             }
-        print(result)
+        #print(result)
         return result
 
     def getListOfTransitions(self):
