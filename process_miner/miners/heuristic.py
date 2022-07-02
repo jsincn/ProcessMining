@@ -54,7 +54,7 @@ class HeuristicMiner:
             for r in self.alphabet:
                 if l != r:
                     val = (abs(df_s.loc[l][r]) - abs(df_s.loc[r][l])) / (abs(df_s.loc[l][r]) + abs(df_s.loc[r][l]) + 1)
-                    print(l + r + str(val))
+                    #print(l + r + str(val))
                     dependency_measures_df = dependency_measures_df.append({'left': l, 'right': r, 'val': val},
                                                                            ignore_index=True)
                 else:
@@ -95,4 +95,7 @@ class HeuristicMiner:
         return list(self.TO)
 
     def get_max_occurrences(self):
-        return Counter(self.L).most_common(1)[0][1]
+        tmp = self.succession_matrix.melt()
+        print(tmp)
+        print(tmp['value'].max())
+        return tmp['value'].max()

@@ -29,7 +29,7 @@ def upload_xes():
     mining_handler.run()
     if mining_handler.success:
         response = mining_handler.prepare_response()
-        print(response)
+        #print(response)
     else:
         response = {}
     return response

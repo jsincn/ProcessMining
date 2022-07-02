@@ -42,13 +42,33 @@
     <h1>Process Mining Result Viewer</h1>
     <div class="row gx-5">
         <div class="col-8">
+            <div class="text-center" style="margin-top: 10%">
+                <div class="clearfix" id="loadingSpinner" hidden>
+                    <div class="spinner-border float-center" style="width: 5rem; height: 5rem;" role="status">
+                        <span class="sr-only"></span>
+                    </div>
+                </div>
+            </div>
             <div id="output"></div>
         </div>
         <div class="col-4">
             <h3>View Controls</h3>
-            <button type="button" class="btn btn-warning" id="svg_download">
+            <button type="button" class="btn btn-warning" id="svg_download" data-toggle="tooltip"
+                    title="Downloads the current view as SVG">
                 Download SVG
             </button>
+            <button type="button" class="btn btn-warning" id="print_report" data-toggle="tooltip"
+                    title="Opens the print preview for exporting the results to pdf or printing">
+                Print Report
+            </button>
+            <br>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="debugStateSwitch">
+                <label class="form-check-label" for="debugStateSwitch" data-toggle="tooltip" data-html="true"
+                       title="Displays place names and provides more verbose log output to the browser console">Enable
+                    Debug View</label>
+            </div>
+            <br>
             <label for="dependencyThresholdSlider" class="form-label heuristicThresholds">Dependency Threshold: <input
                     type="text" id="dependencyThresholdText" class="heuristicThresholds" style="border:None" value="0.7"
                     disabled></label>
@@ -166,10 +186,6 @@
                            aria-describedby="basic-addon3">
                 </div>
 
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="cacheSwitch" checked>
-                    <label class="form-check-label" for="cacheSwitch">Enable Cache</label>
-                </div>
 
             </div>
             <div class="modal-footer">
@@ -194,7 +210,7 @@
 <script src="static/figure_display.js"></script>
 <script src="static/heuristic_display.js"></script>
 <script src="static/FileSaver.js"></script>
-<script src="static/download.js"></script>
+<script src="static/controlHandler.js"></script>
 <script>
     window.debugState = false;
     $(document).ready(function () {
@@ -207,7 +223,8 @@
             if (files.length > 0) {
                 fd.append('file', files[0]);
                 fd.append('algorithm', algorithm);
-                fd.append('lifecycleTransition', lifecycleTransition)
+                fd.append('lifecycleTransition', lifecycleTransition);
+                d3.selectAll("#loadingSpinner").attr('hidden', null);
                 $.ajax({
                     url: 'api/upload',
                     type: 'post',
@@ -223,7 +240,7 @@
                             disableThresholdSliders();
                             updateTable(response);
                             updateFigures(response);
-                            console.log(response);
+                            //console.log(response);
                         } else {
                             window.dependencyMeasureMatrix = response.dependencyMeasureMatrix;
                             window.successionMatrix = response.successionMatrix;
@@ -237,8 +254,9 @@
                             updateTable(response);
                             updateFigures(response);
 
-                            console.log(response)
+                            //console.log(response)
                         }
+                        d3.selectAll("#loadingSpinner").attr('hidden', true);
                     },
                 });
             } else {
