@@ -10,6 +10,7 @@ function chart(data, width, height, types, color, location, drag, linkArc) {
         .force("x", d3.forceX())
         .force("y", d3.forceY());
 
+    // ID is set for export later
     const svg = d3.create("svg")
         .attr("viewBox", [-width / 2, -height / 2, width, height])
         .style("font", "12px sans-serif").attr("id", "svgCanvas");
@@ -76,11 +77,9 @@ function shape(type) {
 }
 
 function linkArc(d) {
-    // Calculate Radius for curved lines
-     const r = Math.hypot(d.target.x - d.source.x, d.target.y - d.source.y);
     //const r = 0;
     if (d.target.type === "trans") {
-        // calculate correct point
+        // Calculate the intercept between an imaginary line joining the two points and the edge of the transition square
         alpha = Math.tan((d.source.y - d.target.y) / (d.source.x - d.target.x))
         if (d.source.x <= d.target.x) {
             qx = d.target.x - 5
@@ -92,7 +91,8 @@ function linkArc(d) {
         } else {
             qy = d.target.y + Math.atan(alpha) * 5
         }
-
+        // Calculate Radius for curved lines
+        const r = Math.hypot(qx - d.source.x, qy - d.source.y);
 
         return `
         M${d.source.x},${d.source.y}
@@ -100,6 +100,8 @@ function linkArc(d) {
   `;
 
     }
+    // Calculate Radius for curved lines
+    const r = Math.hypot(d.target.x - d.source.x, d.target.y - d.source.y);
     return `
     M${d.source.x},${d.source.y}
     A${r},${r} 0 0,1 ${d.target.x},${d.target.y}
@@ -138,13 +140,13 @@ function removeDuplicates(arr) {
 }
 
 function loadPetrinet(locations, transitions) {
-    console.log(locations);
-    console.log(transitions);
+    // console.log(locations);
+    //console.log(transitions);
 
     let links = removeDuplicates(d3.csvParse(transitions))
 
     let loc_raw = removeDuplicates(d3.csvParse(locations))
-    console.log(loc_raw)
+    //console.log(loc_raw)
 
     let types = Array.from(new Set(links.map(d => d.type)))
     let nodes = ['']
@@ -154,16 +156,18 @@ function loadPetrinet(locations, transitions) {
     // append the svg object to the body of the page
     let c = chart(data, 600, 400, types, color, location, drag, linkArc)
 
-    console.log(c)
+    //console.log(c)
+    // Add to output
     document.getElementById("output").innerHTML = ""
     document.getElementById("output").append(c)
 
+    // Adds the Petrinet Tooltip DIV to the bottom of the page
     var div = d3.select("body").append("div")
         .attr("class", "tooltip-petrinet")
 
-
+    // Format transition nodes / identified by the .trans class
     d3.selectAll(".trans").append("rect")
-        .attr("data-id", function (d) {return d.id})
+        .attr("data-id", function (d) {return d.id}) // used for the popup
         .attr("width", 20)
         .attr("height", 20)
         .attr("stroke", 'black')
@@ -176,7 +180,7 @@ function loadPetrinet(locations, transitions) {
         d3.select(this).transition()
             .duration('50')
             .attr('opacity', '.85');
-        //Makes the new div appear on hover
+        // Makes the popup div appear on hover
         nodeId = d.target.getAttribute('data-id');
         div.transition()
             .duration(50)
@@ -193,19 +197,21 @@ function loadPetrinet(locations, transitions) {
                 .style("opacity", 0);
         });
 
+    // Format positions
     d3.selectAll(".pos").append("circle")
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
         .attr("fill", 'white')
         .attr("r", 4);
 
+    // Format start and end node
     d3.selectAll(".se").append("circle")
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
         .attr("fill", 'black')
         .attr("r", 6);
 
-
+    // Label start and end
     d3.selectAll(".se").append("text")
         .attr("x", 6)
         .attr("y", 12)
@@ -215,7 +221,7 @@ function loadPetrinet(locations, transitions) {
         .attr("stroke", "white")
         .attr("stroke-width", 3);
 
-
+    // Label the positions if the debug state is enabled
     if (window.debugState) {
         d3.selectAll(".pos").append("text")
             .attr("x", -2)
@@ -227,7 +233,7 @@ function loadPetrinet(locations, transitions) {
             .attr("stroke-width", 3);
     }
 
-
+    // Add labels to the transitions
     d3.selectAll(".trans").append("text")
         .attr("x", -2)
         .attr("y", 2)

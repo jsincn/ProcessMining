@@ -2,8 +2,8 @@
     position: absolute;
     padding: .5rem;
     color: #313639;
-    border: 1px solid #313639;
+    border: 1px solid #2c3e50;
     pointer-events: none;
-    background-color: #e74c3c;
+    background-color: #ecf0f1;
     border-radius: 5px 5px;
 }

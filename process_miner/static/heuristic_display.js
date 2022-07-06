@@ -1,14 +1,14 @@
 /**
  * Highly complicated function calculating the Splits and Joins of the heuristic miner in order to generate a petri-net
  * Can be argued whether this should be done in the frontend, but I do like the instance response it gives when changing the parameters (dependency measure and occurrence thresholds)
- * @param {object} dependencyMeasureMatrix 
- * @param {object} successionMatrix 
- * @param {list} traces 
- * @param {list} alphabet 
- * @param {list} start 
- * @param {list} end 
- * @param {float} occurrence_threshold 
- * @param {float} dependency_threshold 
+ * @param {object} dependencyMeasureMatrix
+ * @param {object} successionMatrix
+ * @param {list} traces
+ * @param {list} alphabet
+ * @param {list} start
+ * @param {list} end
+ * @param {float} occurrence_threshold
+ * @param {float} dependency_threshold
  */
 function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, traces, alphabet, start, end, occurrence_threshold, dependency_threshold) {
 
@@ -248,13 +248,13 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
     loadPetrinet(locations, transitions);
     // console.log(inputs);
     // console.log(outputs);
-    
+
     // console.log("Transitions: " + trans)
 }
 
 /**
  * Updates the maxOccurences Slider and enables the sliders
- * @param {*} maxOccurrences 
+ * @param {*} maxOccurrences
  */
 function enableThresholdSliders(maxOccurrences) {
     d3.selectAll(".heuristicThresholds").attr('disabled', null);
@@ -268,7 +268,6 @@ function enableThresholdSliders(maxOccurrences) {
 function disableThresholdSliders() {
     d3.selectAll(".heuristicThresholds").attr('disabled', true);
 }
-
 
 
 // Just some input handlers for the different thresholds

@@ -10,6 +10,7 @@ $("#svg_download").click(function () {
     saveAs(svgBlob, "output.svg");
 })
 
+
 $("#print_report").click(function () {
     print();
 })

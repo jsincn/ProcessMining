@@ -1,0 +1,5 @@
+PM4PY Heuristic Miner
+TODO: Rounded/Straight edge toggle
+TODO: toggle transition square size
+TODO: Dynamic canvas sizing?
+TODO: Heuristic miner metric

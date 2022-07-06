@@ -16,14 +16,14 @@ Currently a subset of standard process mining features are available in the tool
 - Heuristic Miner
 - General decision statistics
 - Transition heat maps
-- Occurance counters
+- Occurrence counters
 
 ## Usage
 The usage should be reasonably self explanatory from the UI, a built-in help is also available there.
 
 ## Authors and acknowledgment
 The petrinet viewer is based on the Mobile Patent Suits Example by the D3 Team (Mike Bostock). 
-The original example is available under The original example is available under https://observablehq.com/@d3/mobile-patent-suits. 
+The original example is available under https://observablehq.com/@d3/mobile-patent-suits. 
 
 ## License
 Currently no license has been selected.
