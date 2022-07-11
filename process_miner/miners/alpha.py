@@ -159,6 +159,12 @@ class AlphaMiner:
             csv = csv + jointuple(f[0]) + "," + jointuple(f[1]) + ",all\n"
         return csv
 
+    def get_transition_list(self):
+        transitions = []
+        for f in self.FL:
+            transitions.append([jointuple(f[0]), jointuple(f[1])])
+        return transitions
+
     def get_meta(self):
         """
         Generates meta data about the algorithm execution

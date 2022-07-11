@@ -139,6 +139,83 @@ function removeDuplicates(arr) {
                        index) => arr.indexOf(item) === index);
 }
 
+function decisionInfoHeuristicMiner(nodeId, div, d) {
+    let decisionPoint = nodeId.split("|")[1].split("-").length > 1;
+    if (decisionPoint) {
+        let source_node = nodeId.split("|")[0];
+        let options = Object.keys(window.decisionInformation[source_node]['options']);
+        let decisionString = "Decision Options: <br><table  class=\"table\">";
+        decisionString += "<tr>";
+        decisionString += "<th>Attribute</th>";
+        for (const option of options) {
+            decisionString += "<th>" + option + "</th>";
+        }
+        decisionString += "</tr>";
+        for (const attribute of window.decisionInformation[source_node]['commonAttributes']) {
+            decisionString += "<tr>";
+            decisionString += "<td>" + attribute + "</td>";
+            for (const option of options) {
+                decisionString += "<td>" + window.decisionInformation[source_node]['options'][option]['equals'][attribute] + "</td>";
+            }
+            decisionString += "</tr>";
+        }
+        decisionString += "</table>";
+        div.html(decisionString)
+            .style("left", (d.pageX + 10) + "px")
+            .style("top", (d.pageY - 15) + "px");
+    } else {
+        div.html("Not a decision point")
+            .style("left", (d.pageX + 10) + "px")
+            .style("top", (d.pageY - 15) + "px");
+    }
+    div.transition()
+        .duration(50)
+        .style("opacity", 1);
+}
+
+function decisionInfoAlphaMiner(nodeId, div, d) {
+    let source_nodes = [];
+    let destination_nodes = [];
+    for (const trans of window.transitionList) {
+        if (trans[0] === nodeId) {
+            destination_nodes.push(trans[1])
+        } else if (trans[1] === nodeId) {
+            source_nodes.push(trans[0])
+        }
+    }
+    let decisionPoint = destination_nodes.length > 1;
+    if (decisionPoint) {
+        let source_node = source_nodes[0];
+        let options = Object.keys(window.decisionInformation[source_node]['options']);
+        let decisionString = "Decision Options: <br><table  class=\"table\">";
+        decisionString += "<tr>";
+        decisionString += "<th>Attribute</th>";
+        for (const option of options) {
+            decisionString += "<th>" + option + "</th>";
+        }
+        decisionString += "</tr>";
+        for (const attribute of window.decisionInformation[source_node]['commonAttributes']) {
+            decisionString += "<tr>";
+            decisionString += "<td>" + attribute + "</td>";
+            for (const option of options) {
+                decisionString += "<td>" + window.decisionInformation[source_node]['options'][option]['equals'][attribute] + "</td>";
+            }
+            decisionString += "</tr>";
+        }
+        decisionString += "</table>";
+        div.html(decisionString)
+            .style("left", (d.pageX + 10) + "px")
+            .style("top", (d.pageY - 15) + "px");
+    } else {
+        div.html("Not a decision point")
+            .style("left", (d.pageX + 10) + "px")
+            .style("top", (d.pageY - 15) + "px");
+    }
+    div.transition()
+        .duration(50)
+        .style("opacity", 1);
+}
+
 function loadPetrinet(locations, transitions) {
     // console.log(locations);
     //console.log(transitions);
@@ -167,7 +244,9 @@ function loadPetrinet(locations, transitions) {
 
     // Format transition nodes / identified by the .trans class
     d3.selectAll(".trans").append("rect")
-        .attr("data-id", function (d) {return d.id}) // used for the popup
+        .attr("data-id", function (d) {
+            return d.id
+        }) // used for the popup
         .attr("width", 20)
         .attr("height", 20)
         .attr("stroke", 'black')
@@ -186,24 +265,26 @@ function loadPetrinet(locations, transitions) {
             .duration(50)
             .style("opacity", 1);
         div.html("<b>"
-                + window.nodeStats[nodeId]['name']
-                + "</b><br>Occurrences: "
-                + window.nodeStats[nodeId]['countOccurence']
-                + "<br> Latest Occurrence: "
-                + window.nodeStats[nodeId]['latestOccurence'])
+            + window.nodeStats[nodeId]['name']
+            + "</b><br>Occurrences: "
+            + window.nodeStats[nodeId]['countOccurence']
+            + "<br> Latest Occurrence: "
+            + window.nodeStats[nodeId]['latestOccurence'])
             .style("left", (d.pageX + 10) + "px")
             .style("top", (d.pageY - 15) + "px");
-        }).on('mouseout', function (d, i) {
-            d3.select(this).transition()
-                .duration('50')
-                .attr('opacity', '1');
-            div.transition()
-                .duration('50')
-                .style("opacity", 0);
-        });
+    }).on('mouseout', function (d, i) {
+        d3.select(this).transition()
+            .duration('50')
+            .attr('opacity', '1');
+        div.transition()
+            .duration('50')
+            .style("opacity", 0);
+    });
 
-        d3.selectAll(".transH").append("rect")
-        .attr("data-id", function (d) {return d.id}) // used for the popup
+    d3.selectAll(".transH").append("rect")
+        .attr("data-id", function (d) {
+            return d.id
+        }) // used for the popup
         .attr("width", 20)
         .attr("height", 20)
         .attr("stroke", 'black')
@@ -216,7 +297,9 @@ function loadPetrinet(locations, transitions) {
 
     // Format positions
     d3.selectAll(".pos").append("circle")
-        .attr("data-id", function (d) {return d.id})
+        .attr("data-id", function (d) {
+            return d.id
+        })
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
         .attr("fill", 'white')
@@ -226,46 +309,24 @@ function loadPetrinet(locations, transitions) {
             .attr('opacity', '.85');
         // Makes the popup div appear on hover
         let nodeId = d.target.getAttribute('data-id');
-        let decisionPoint = nodeId.split("|")[1].split("-").length > 1;
-        if (decisionPoint) {
-            let source_node = nodeId.split("|")[0];
-            let options = Object.keys(window.decisionInformation[source_node]['options']);
-            let decisionString = "Decision Options: <br><table  class=\"table\">";
-            decisionString += "<tr>";
-            decisionString += "<th>Attribute</th>";
-            for (const option of options) {
-                    decisionString += "<th>" + option + "</th>";
-            }
-            decisionString += "</tr>";
-            for (const attribute of window.decisionInformation[source_node]['commonAttributes']) {
-                decisionString += "<tr>";
-                decisionString += "<td>" + attribute + "</td>";
-                for (const option of options) {
-                    decisionString += "<td>" + window.decisionInformation[source_node]['options'][option]['equals'][attribute] + "</td>";
-                }
-                decisionString += "</tr>";
-            }
-            decisionString += "</table>";
-            div.html(decisionString)
-            .style("left", (d.pageX + 10) + "px")
-            .style("top", (d.pageY - 15) + "px");
+        if (nodeId.split("|").length <= 1) {
+            // Alpha Miner Result
+            decisionInfoAlphaMiner(nodeId, div, d);
         } else {
-            div.html("Not a decision point")
-            .style("left", (d.pageX + 10) + "px")
-            .style("top", (d.pageY - 15) + "px");
+            // Heuristic Miner Result
+            decisionInfoHeuristicMiner(nodeId, div, d);
         }
-        div.transition()
-            .duration(50)
-            .style("opacity", 1);
 
-        }).on('mouseout', function (d, i) {
-            d3.select(this).transition()
-                .duration('50')
-                .attr('opacity', '1');
-            div.transition()
-                .duration('50')
-                .style("opacity", 0);
-        });;
+
+    }).on('mouseout', function (d, i) {
+        d3.select(this).transition()
+            .duration('50')
+            .attr('opacity', '1');
+        div.transition()
+            .duration('50')
+            .style("opacity", 0);
+    });
+    ;
 
     // Format start and end node
     d3.selectAll(".se").append("circle")

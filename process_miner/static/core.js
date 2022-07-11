@@ -36,6 +36,7 @@ $(document).ready(function () {
                     console.log(response);
                     if (response.algorithm === "Alpha Miner") {
                         // Run Alpha Miner Logic
+                        window.transitionList = response.transitionList;
                         loadPetrinet(response.locations, response.transitions);
                         disableThresholdSliders();
                         updateTable(response);

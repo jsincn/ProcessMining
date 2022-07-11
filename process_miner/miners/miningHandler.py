@@ -67,6 +67,7 @@ class MiningHandler:
                         'averageExecutionChainTypeTime': self.stats.generate_average_execution_per_chain_type_over_time(),
                         'nodeStats': self.stats.generateTransitionInformation(),
                         'meta': self.miner.get_meta(),
+                        'transitionList': self.miner.get_transition_list(),
                         'decisionInformation': self.decisions.calculateDecision()}
             return response
         elif self.algorithm == "Heuristic Miner":
