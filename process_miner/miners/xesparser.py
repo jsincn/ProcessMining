@@ -1,5 +1,11 @@
 import xml.etree.ElementTree as ET
 import pandas as pd
+import re
+
+def namespace(element):
+    m = re.match(r'\{.*\}', element.tag)
+    return m.group(0) if m else ''
+
 
 
 class XESParser:
@@ -10,13 +16,14 @@ class XESParser:
 
     def read_xes(self, string):
         logs = ET.ElementTree(ET.fromstring(string))
-
+        nmspce = namespace(logs.getroot())
+        print(nmspce)
 
         root = logs.getroot()
         traces = []
         #print(root)
         for child in root:
-            if child.tag == "{http://www.xes-standard.org/}trace":
+            if child.tag == nmspce + "trace":
                 traces.append(child)
                 #print(child)
 
@@ -25,10 +32,10 @@ class XESParser:
             trace_df = pd.DataFrame()
             trace_name = "UNDEFINED"
             for tag in trace:
-                if tag.tag == "{http://www.xes-standard.org/}string" and tag.attrib["key"] == "concept:name":
+                if tag.tag == nmspce + "string" and tag.attrib["key"] == "concept:name":
                     trace_name = tag.attrib["value"]
                     #print(trace_name)
-                if tag.tag == "{http://www.xes-standard.org/}event":
+                if tag.tag == nmspce + "event":
                     event_log = {}
                     for event_prop in tag:
                         event_prop_type = event_prop.get('key')
@@ -38,8 +45,10 @@ class XESParser:
             trace_df['trace_name'] = trace_name
             traces_df = pd.concat([traces_df, trace_df])
 
-        #print(traces_df)
-        traces_df = traces_df.sort_values(["trace_name", "time:timestamp"], ascending=True)
+        print(traces_df.columns)
+        if "lifecycle:transition" not in traces_df.columns:
+            traces_df["lifecycle:transition"] = "default"
+        # traces_df = traces_df.sort_values(["trace_name", "time:timestamp"], ascending=True)
 
         self.parsed_logs = traces_df
         return True

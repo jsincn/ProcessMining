@@ -54,6 +54,9 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
         for (let i = trace.length - 1; i >= 0; i--) {
             for (let j = i; j >= 0; j--) {
                 if (trans.some(e => isEqual(e, {'left': trace[j], 'right': trace[i]}))) {
+                    // if (trace[j] === trace[i]) {
+                    //     break;
+                    // }
                     if (!trace_l_out[j].includes(trace[i])) {
                         trace_l_out[j].push(trace[i]);
                     }
@@ -71,6 +74,9 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
             if (trace_l_out[i].length < 1) {
                 for (let j = i; j < trace.length; j++) {
                     if (trans.some(e => isEqual(e, {'left': trace[i], 'right': trace[j]}))) {
+                        // if (trace[j] === trace[i]) {
+                        //     break;
+                        // }
                         if (!trace_l_out[i].includes(trace[j])) {
                             trace_l_out[i].push(trace[j]);
                         }
@@ -117,23 +123,38 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
         transitions += e + ",End,all\n";
     }
 
-
+    console.log(inputs)
+    console.log(outputs)
     // Identify splits and joins based on the number of input and outputs for each transition
     let places_simple = [];
     let places_xor_split = [];
     let places_xor_join = [];
+    let keys;
     for (const letter of alphabet) {
         locations += letter + ",trans\n";
-        if (Object.keys(outputs[letter]).length === 1) {
+        console.log("Analyzing " + letter + " with outputs: " + Object.keys(outputs[letter]))
+        keys = Object.keys(outputs[letter]);
+        keys = keys.map(function (a) {
+                console.log("filtering " + a)
+                let cmp = a.split(",");
+                if (cmp.length > 1) {
+                    cmp = cmp.filter(r => r !== letter);
+                }
+                return cmp.join(",");
+            }
+        )
+        console.log("Analyzing " + letter + " with cleaned outputs: " + keys)
+        if (keys.length === 1) {
             // No XOR Split Necessary
-            let components = Object.keys(outputs[letter])[0].split(",");
+            let components = keys[0].split(",");
             if (components.length < 2 && components.length > 0) {
                 // Sequence Pattern
-                places_simple.push(letter + "|" + Object.keys(outputs[letter])[0] + "|" + outputs[letter][Object.keys(outputs[letter])[0]])
+                places_simple.push(letter + "|" + keys[0] + "|" + 0)
             } else if (components.length > 1) {
                 // AND Pattern
                 for (const p of components) {
-                    places_simple.push(letter + "|" + p + "|" + outputs[letter][Object.keys(outputs[letter])[0]])
+
+                    places_simple.push(letter + "|" + p + "|" + 0)
                 }
 
             }
@@ -141,46 +162,89 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
             // XOR Split necessary
             let out_str = letter + "|"
             let sum = 0;
-            for (const key of Object.keys(outputs[letter])) {
+            for (const key of keys) {
+                // if (key === letter) {
+                //     continue;
+                // }
                 let components = key.split(",");
+                console.log("Analyzing " + letter + " key " + key + " outputs: " + components)
+                // if (components.length > 1) {
+                //     components = components.filter(function (a) {
+                //             return !(a === letter);
+                //         }
+                //     )
+                // }
+                console.log("Analyzing " + letter + " key " + key + " sanitized outputs: " + components)
+
                 if (components.length < 2 && components.length > 0 && key.length > 0) {
                     components = components.filter(function (value) {
-                        return !(value === key);
+                        return !(value === key) || !(value === letter);
                     })
                     out_str += key + "-"
-                    sum += outputs[letter][Object.keys(outputs[letter])[0]];
+                    sum += outputs[letter][keys[0]];
                 } else if (components.length > 1) {
                     out_str += "andsplit" + components.join("/") + "-";
-                    locations += "andsplit" + components.join("/") + ",trans\n"
+                    locations += "andsplit" + components.join("/") + ",transH\n"
                     for (const c of components) {
-                        places_simple.push("andsplit" + components.join("/") + "|" + c + "|" + outputs[letter][Object.keys(outputs[letter])[0]])
+
+                        places_simple.push("andsplit" + components.join("/") + "|" + c + "|" + 0)
                     }
-                    sum += outputs[letter][Object.keys(outputs[letter])[0]];
+                    sum += outputs[letter][keys[0]];
                 }
             }
-            out_str = out_str.slice(0, -1)
-            out_str += "|"
-            places_xor_split.push(out_str)
+            out_str = out_str.slice(0, -1);
+            out_str += "|";
+            out_str += 0;
+            places_xor_split.push(out_str);
+            console.log("out_str" + out_str)
         }
     }
+    console.log(places_xor_split)
+
 
     for (const letter of alphabet) {
-        if (Object.keys(inputs[letter]).length === 1) {
+
+        keys = Object.keys(inputs[letter]);
+        keys = keys.map(function (a) {
+                console.log("filtering " + a)
+                let cmp = a.split(",");
+
+                cmp = cmp.filter(r => r !== letter);
+
+                return cmp.join(",");
+            }
+        );
+        keys = keys.filter(a => a !== "");
+        console.log("Analyzing " + letter + " with cleaned inputs: " + keys)
+
+        if (keys.length === 1) {
             // No XOR Join Necessary
             // Nothing to do here
         } else {
             // XOR Join necessary
             let in_str = ""
             let sum = 0;
-            for (const key of Object.keys(inputs[letter])) {
+            for (const key of keys) {
+                // if (key === letter) {
+                //     continue;
+                // }
+
                 let components = key.split(",");
+                console.log("Analyzing " + letter + " key " + key + " inputs: " + components)
+                // if (components.length > 1) {
+                //     components = components.filter(function (a) {
+                //             return !(a === letter);
+                //         }
+                //     )
+                // }
+                console.log("Analyzing " + letter + " key " + key + " sanitized inputs: " + components)
                 if (components.length < 2 && components.length > 0 && key.length > 0) {
                     // Join for just XOR of individual states
-                    components = components.filter(function (value) {
-                        return !(value === key);
-                    })
+                    // components = components.filter(function (value) {
+                    //     return !(value === key);
+                    // })
                     in_str += key + "-"
-                    sum += inputs[letter][Object.keys(inputs[letter])[0]];
+                    sum += inputs[letter][keys[0]];
                     places_simple = places_simple.filter(function (value, index, array) {
                         let parts = value.split("|");
                         let dst_cmp = parts[1].split("-");
@@ -189,11 +253,11 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
                 } else if (components.length > 1 && key.length > 0) {
                     // Join of both an XOR and an AND
                     in_str += "andjoin" + components.join("/") + "-";
-                    locations += "andjoin" + components.join("/") + ",trans\n"
+                    locations += "andjoin" + components.join("/") + ",transH\n"
                     for (const c of components) {
-                        places_simple.push(c + "|" + "andjoin" + components.join("/") + "|" + inputs[letter][Object.keys(inputs[letter])[0]])
+                        places_simple.push(c + "|" + "andjoin" + components.join("/") + "|" + 1)
                     }
-                    sum += inputs[letter][Object.keys(inputs[letter])[0]];
+                    sum += inputs[letter][keys[0]];
                     places_simple = places_simple.filter(function (value, index, array) {
                         let parts = value.split("|");
                         let dst_cmp = parts[1].split("-");
@@ -203,9 +267,10 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
             }
             in_str = in_str.slice(0, -1);
             if (in_str.length > 0) {
-                in_str += "|" + letter + "|" + sum;
+                in_str += "|" + letter + "|" + 1;
                 places_xor_join.push(in_str);
             }
+            console.log("in_str" + in_str)
         }
     }
     // console.log(places_simple)

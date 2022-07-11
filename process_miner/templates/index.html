@@ -36,19 +36,18 @@
         </div>
     </div>
 </header>
-
-<div style="margin-left: 20px; margin-right: 20px">
+<div class="text-center" style="margin-top: 10%" id="loadingSpinner" hidden>
+    <div class="clearfix">
+        <div class="spinner-border float-center" style="width: 5rem; height: 5rem;" role="status">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+</div>
+<div style="margin-left: 20px; margin-right: 20px" id="result_viewer">
     <br>
     <h1>Process Mining Result Viewer</h1>
     <div class="row gx-5">
         <div class="col-8">
-            <div class="text-center" style="margin-top: 10%">
-                <div class="clearfix" id="loadingSpinner" hidden>
-                    <div class="spinner-border float-center" style="width: 5rem; height: 5rem;" role="status">
-                        <span class="sr-only"></span>
-                    </div>
-                </div>
-            </div>
             <div id="output"></div>
         </div>
         <div class="col-4">
@@ -127,8 +126,9 @@
         </div>
         <div class="col-6">
             <div id="occurrenceHistogram"></div>
-            <div id="averageExecutionChainTypeTime"></div>
+
         </div>
+        <div id="averageExecutionChainTypeTime"></div>
 
     </div>
 </div>
@@ -211,60 +211,7 @@
 <script src="static/heuristic_display.js"></script>
 <script src="static/FileSaver.js"></script>
 <script src="static/controlHandler.js"></script>
-<script>
-    window.debugState = false;
-    $(document).ready(function () {
-        $("#upload_button").click(function () {
-
-            var fd = new FormData();
-            var files = $('#xes_file')[0].files;
-            var algorithm = $('#algorithmSelect').get(0).options[algorithmSelect.selectedIndex].text;
-            var lifecycleTransition = $('#lifecycleTransition').get(0).value;
-            if (files.length > 0) {
-                fd.append('file', files[0]);
-                fd.append('algorithm', algorithm);
-                fd.append('lifecycleTransition', lifecycleTransition);
-                d3.selectAll("#loadingSpinner").attr('hidden', null);
-                $.ajax({
-                    url: 'api/upload',
-                    type: 'post',
-                    data: fd,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        window.legend = [];
-                        window.nodeStats = response.nodeStats;
-                        if (response.algorithm === "Alpha Miner") {
-
-                            loadPetrinet(response.locations, response.transitions);
-                            disableThresholdSliders();
-                            updateTable(response);
-                            updateFigures(response);
-                            //console.log(response);
-                        } else {
-                            window.dependencyMeasureMatrix = response.dependencyMeasureMatrix;
-                            window.successionMatrix = response.successionMatrix;
-                            window.alphabet = response.alphabet;
-                            window.startNodes = response.start;
-                            window.endNodes = response.end;
-                            window.traces = response.l;
-                            enableThresholdSliders(response.maxOccurrences);
-                            updateHeuristicDisplay(response.dependencyMeasureMatrix, response.successionMatrix, response.l, response.alphabet, response.start, response.end, 2, 0.8);
-
-                            updateTable(response);
-                            updateFigures(response);
-
-                            //console.log(response)
-                        }
-                        d3.selectAll("#loadingSpinner").attr('hidden', true);
-                    },
-                });
-            } else {
-                alert("Please select a file.");
-            }
-        });
-    });
-</script>
+<script src="static/core.js"></script>
 
 </body>
 </html>

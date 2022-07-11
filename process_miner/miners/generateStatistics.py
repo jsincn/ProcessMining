@@ -101,13 +101,9 @@ class StatisticsGenerator:
 
 
         # Create layout. With layout you can customize plotly plo
-        fig = px.bar(time_df, x="start", y="delta_sec", color="concept:name")
-        fig.update_layout(legend=dict(
-            yanchor="top",
-            y=0.99,
-            xanchor="left",
-            x=0.01
-        ))
+        fig = px.bar(time_df, x="start", y="delta_sec", color="concept:name", width=1600, height=600)
+        fig.update_layout(legend=dict(orientation="h")
+        )
         graph = pio.to_json(fig)
         return graph
 

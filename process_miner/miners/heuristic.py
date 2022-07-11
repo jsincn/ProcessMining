@@ -6,6 +6,7 @@ import pandas as pd
 class HeuristicMiner:
 
     def __init__(self):
+        self.and_xor_split_matrix = pd.DataFrame()
         self.TI = []
         self.TO = []
         self.L = []
@@ -49,21 +50,32 @@ class HeuristicMiner:
                 self.succession_matrix.loc[l] = empty_row
 
         dependency_measures_df = pd.DataFrame(columns=['left', 'right', 'val'])
+        and_xor_split_df = pd.DataFrame(columns=['left', 'right', 'val'])
         df_s = self.succession_matrix
         for l in self.alphabet:
             for r in self.alphabet:
                 if l != r:
-                    val = (abs(df_s.loc[l][r]) - abs(df_s.loc[r][l])) / (abs(df_s.loc[l][r]) + abs(df_s.loc[r][l]) + 1)
+                    val_dependency = (abs(df_s.loc[l][r]) - abs(df_s.loc[r][l])) / (abs(df_s.loc[l][r]) + abs(df_s.loc[r][l]) + 1)
+                    val_and_xor = (abs(df_s.loc[l][r]) + abs(df_s.loc[r][l])) / (abs(df_s.loc[l][r]) + abs(df_s.loc[r][l]) + 1)
                     #print(l + r + str(val))
-                    dependency_measures_df = dependency_measures_df.append({'left': l, 'right': r, 'val': val},
+                    dependency_measures_df = dependency_measures_df.append({'left': l, 'right': r, 'val': val_dependency},
+                                                                           ignore_index=True)
+                    and_xor_split_df = and_xor_split_df.append({'left': l, 'right': r, 'val': val_and_xor},
                                                                            ignore_index=True)
                 else:
                     val = abs(df_s.loc[l][r]) / (abs(df_s.loc[l][r]) + 1)
                     dependency_measures_df = dependency_measures_df.append({'left': l, 'right': r, 'val': val},
                                                                            ignore_index=True)
+                    and_xor_split_df = and_xor_split_df.append({'left': l, 'right': r, 'val': -1},
+                                                                           ignore_index=True)
 
         dependency_measures_df = dependency_measures_df.reset_index()
+        and_xor_split_df = and_xor_split_df.reset_index()
         self.dependency_measure_matrix = dependency_measures_df.pivot(index="left", columns='right', values='val')
+        self.and_xor_split_matrix = and_xor_split_df.pivot(index="left", columns='right', values='val')
+
+
+
 
         for i in self.L:
             self.TI.append(i[0])
@@ -80,6 +92,9 @@ class HeuristicMiner:
 
     def get_dependency_measure_matrix(self):
         return self.dependency_measure_matrix.to_dict('index')
+
+    def get_and_xor_split_matrix(self):
+        return self.and_xor_split_matrix.to_dict('index')
 
     def get_alphabet(self):
         return list(self.alphabet)

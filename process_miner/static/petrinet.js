@@ -185,7 +185,12 @@ function loadPetrinet(locations, transitions) {
         div.transition()
             .duration(50)
             .style("opacity", 1);
-        div.html("<b>" +window.nodeStats[nodeId]['name'] + "</b><br>Occurrences: " +window.nodeStats[nodeId]['countOccurence'] + "<br> Latest Occurrence: " + window.nodeStats[nodeId]['latestOccurence'])
+        div.html("<b>"
+                + window.nodeStats[nodeId]['name']
+                + "</b><br>Occurrences: "
+                + window.nodeStats[nodeId]['countOccurence']
+                + "<br> Latest Occurrence: "
+                + window.nodeStats[nodeId]['latestOccurence'])
             .style("left", (d.pageX + 10) + "px")
             .style("top", (d.pageY - 15) + "px");
         }).on('mouseout', function (d, i) {
@@ -197,12 +202,70 @@ function loadPetrinet(locations, transitions) {
                 .style("opacity", 0);
         });
 
+        d3.selectAll(".transH").append("rect")
+        .attr("data-id", function (d) {return d.id}) // used for the popup
+        .attr("width", 20)
+        .attr("height", 20)
+        .attr("stroke", 'black')
+        .attr("fill", 'black')
+        .attr("x", -10)
+        .attr("y", -10)
+        .attr("class", function (d) {
+            return "node type " + d.type
+        })
+
     // Format positions
     d3.selectAll(".pos").append("circle")
+        .attr("data-id", function (d) {return d.id})
         .attr("stroke", "black")
         .attr("stroke-width", 1.5)
         .attr("fill", 'white')
-        .attr("r", 4);
+        .attr("r", 4).on('mouseover', function (d, i) {
+        d3.select(this).transition()
+            .duration('50')
+            .attr('opacity', '.85');
+        // Makes the popup div appear on hover
+        let nodeId = d.target.getAttribute('data-id');
+        let decisionPoint = nodeId.split("|")[1].split("-").length > 1;
+        if (decisionPoint) {
+            let source_node = nodeId.split("|")[0];
+            let options = Object.keys(window.decisionInformation[source_node]['options']);
+            let decisionString = "Decision Options: <br><table  class=\"table\">";
+            decisionString += "<tr>";
+            decisionString += "<th>Attribute</th>";
+            for (const option of options) {
+                    decisionString += "<th>" + option + "</th>";
+            }
+            decisionString += "</tr>";
+            for (const attribute of window.decisionInformation[source_node]['commonAttributes']) {
+                decisionString += "<tr>";
+                decisionString += "<td>" + attribute + "</td>";
+                for (const option of options) {
+                    decisionString += "<td>" + window.decisionInformation[source_node]['options'][option]['equals'][attribute] + "</td>";
+                }
+                decisionString += "</tr>";
+            }
+            decisionString += "</table>";
+            div.html(decisionString)
+            .style("left", (d.pageX + 10) + "px")
+            .style("top", (d.pageY - 15) + "px");
+        } else {
+            div.html("Not a decision point")
+            .style("left", (d.pageX + 10) + "px")
+            .style("top", (d.pageY - 15) + "px");
+        }
+        div.transition()
+            .duration(50)
+            .style("opacity", 1);
+
+        }).on('mouseout', function (d, i) {
+            d3.select(this).transition()
+                .duration('50')
+                .attr('opacity', '1');
+            div.transition()
+                .duration('50')
+                .style("opacity", 0);
+        });;
 
     // Format start and end node
     d3.selectAll(".se").append("circle")

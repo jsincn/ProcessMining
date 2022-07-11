@@ -4,6 +4,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 
 from process_miner.miners.alpha import AlphaMiner
+from process_miner.miners.decision import DecisionMiner
 from process_miner.miners.generateStatistics import StatisticsGenerator
 from process_miner.miners.heuristic import HeuristicMiner
 from process_miner.miners.xesparser import XESParser
@@ -12,6 +13,7 @@ from process_miner.miners.xesparser import XESParser
 class MiningHandler:
 
     def __init__(self, algorithm, file, lifecycleTransition):
+        self.decisions = None
         self.miner = None
         self.file = file
         self.algorithm = algorithm
@@ -35,6 +37,7 @@ class MiningHandler:
                 self.miner.run(traces_df)
                 self.stop = timeit.default_timer()
                 self.stats = StatisticsGenerator(traces_df, self.miner.L)
+                self.decisions = DecisionMiner(traces_df, self.miner.L)
                 self.success = True
         elif self.algorithm == "Heuristic Miner":
             # Run the Heuristic Miner
@@ -49,6 +52,7 @@ class MiningHandler:
                 self.miner.run(traces_df)
                 self.stop = timeit.default_timer()
                 self.stats = StatisticsGenerator(traces_df, self.miner.L)
+                self.decisions = DecisionMiner(traces_df, self.miner.L)
                 self.success = True
 
     def prepare_response(self):
@@ -62,15 +66,17 @@ class MiningHandler:
                         'listLifecycleTransitions': self.stats.getListOfTransitions(),
                         'averageExecutionChainTypeTime': self.stats.generate_average_execution_per_chain_type_over_time(),
                         'nodeStats': self.stats.generateTransitionInformation(),
-                        'meta': self.miner.get_meta()}
+                        'meta': self.miner.get_meta(),
+                        'decisionInformation': self.decisions.calculateDecision()}
             return response
         elif self.algorithm == "Heuristic Miner":
             response = {'successionMatrix': self.miner.get_succession_matrix(),
                         'dependencyMeasureMatrix': self.miner.get_dependency_measure_matrix(),
+                        'andXorMeasureMatrix': self.miner.get_and_xor_split_matrix(),
                         'alphabet': self.miner.get_alphabet(),
                         'start': self.miner.get_start(),
                         'end': self.miner.get_end(),
-                        'maxOccurrences': self.miner.get_max_occurrences(),
+                        'maxOccurrences': 100,
                         'filename': secure_filename(self.file.filename), 'runtime': self.stop - self.start,
                         'algorithm': "Heuristic Miner", 'cache': False, 'timestamp': datetime.now(),
                         'l': self.miner.get_l(),
@@ -80,5 +86,6 @@ class MiningHandler:
                         'listLifecycleTransitions': self.stats.getListOfTransitions(),
                         'averageExecutionChainTypeTime': self.stats.generate_average_execution_per_chain_type_over_time(),
                         'nodeStats': self.stats.generateTransitionInformation(),
-                        'meta': self.miner.get_meta()}
+                        'meta': self.miner.get_meta(),
+                        'decisionInformation': self.decisions.calculateDecision()}
             return response
