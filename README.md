@@ -7,7 +7,7 @@ Setup and installation is easy:
 2. Create a virtual environment
 3. Activate the virtual environment
 4. ```pip install -r process_miner/requirements.txt```
-5. ```flask run```
+5. ```gunicorn -b [::]:8012 "process_miner:create_app()" --timeout 6000```
 
 ## Supported Features
 

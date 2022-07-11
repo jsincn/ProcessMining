@@ -34,7 +34,7 @@ $(document).ready(function () {
                     window.nodeStats = response.nodeStats;
                     window.decisionInformation = response.decisionInformation;
                     console.log(response);
-                    if (response.algorithm === "Alpha Miner") {
+                    if (response.algorithm === "Alpha Miner" || response.algorithm === "Alpha Plus Miner") {
                         // Run Alpha Miner Logic
                         window.transitionList = response.transitionList;
                         loadPetrinet(response.locations, response.transitions);

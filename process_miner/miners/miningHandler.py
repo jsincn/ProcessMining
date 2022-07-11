@@ -4,6 +4,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 
 from process_miner.miners.alpha import AlphaMiner
+from process_miner.miners.alphaplus import AlphaPlusMiner
 from process_miner.miners.decision import DecisionMiner
 from process_miner.miners.generateStatistics import StatisticsGenerator
 from process_miner.miners.heuristic import HeuristicMiner
@@ -39,6 +40,20 @@ class MiningHandler:
                 self.stats = StatisticsGenerator(traces_df, self.miner.L)
                 self.decisions = DecisionMiner(traces_df, self.miner.L)
                 self.success = True
+        elif self.algorithm == "Alpha Plus Miner":
+            self.start = timeit.default_timer()
+            parser = XESParser()
+            if parser.read_xes(self.file.read()):
+                traces_df = parser.get_parsed_logs()
+                # filter lifecycle transition
+                if self.lifecycleTransition != "":
+                    traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
+                self.miner = AlphaPlusMiner()
+                self.miner.run(traces_df)
+                self.stop = timeit.default_timer()
+                self.stats = StatisticsGenerator(traces_df, self.miner.L)
+                self.decisions = DecisionMiner(traces_df, self.miner.L)
+                self.success = True
         elif self.algorithm == "Heuristic Miner":
             # Run the Heuristic Miner
             self.start = timeit.default_timer()
@@ -56,10 +71,10 @@ class MiningHandler:
                 self.success = True
 
     def prepare_response(self):
-        if self.algorithm == "Alpha Miner":
+        if self.algorithm == "Alpha Miner" or self.algorithm == "Alpha Plus Miner":
             response = {'locations': self.miner.get_location_csv(), 'transitions': self.miner.get_transition_csv(),
                         'filename': secure_filename(self.file.filename), 'runtime': self.stop - self.start,
-                        'algorithm': "Alpha Miner", 'cache': False, 'timestamp': datetime.now(),
+                        'algorithm': self.algorithm, 'cache': False, 'timestamp': datetime.now(),
                         'mostCommonStep': self.stats.generate_most_common_step(),
                         'successionHeatmap': self.stats.generate_succession_heatmap(),
                         'occurrenceHistogram': self.stats.generate_occurrence_histogram(),
