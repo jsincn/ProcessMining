@@ -1,9 +1,12 @@
+import timeit
 from collections import Counter
 
 import pandas as pd
 import plotly.express as px
 import plotly.io as pio
 import plotly.graph_objects as go
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 
 class StatisticsGenerator:
@@ -31,6 +34,8 @@ class StatisticsGenerator:
         return graph
 
     def generate_succession_heatmap(self):
+        print("Generate Succession Heatmap")
+        start = timeit.default_timer()
         # Generates the succession heatmap and returns it as json
         direct_successions_hm = []
         for trace in self.L:
@@ -60,20 +65,28 @@ class StatisticsGenerator:
             textfont={"size": 20},
             colorscale='Inferno'))
         graph = pio.to_json(fig)
+        end = timeit.default_timer()
+        print("Completed generate heatmap in " + str(end-start) + "s")
         return graph
 
     def generate_occurrence_histogram(self):
+        print("Generate Occurrence Histogram")
+        start = timeit.default_timer()
         # Generate occurrence histogram and return as JSON using the ploty histogram function
         if not {'concept:name', 'time:timestamp', 'lifecycle:transition'}.issubset(self.traces_df.columns):
             print("Can't render")
             return ""
         time_df = self.traces_df[['concept:name', 'time:timestamp', 'lifecycle:transition']]
-        time_df['timestamp'] = pd.to_datetime(time_df['time:timestamp'])
+        time_df['timestamp'] = pd.to_datetime(time_df['time:timestamp'], utc=True)
         fig = px.histogram(time_df, x="time:timestamp", color="concept:name")
         graph = pio.to_json(fig)
+        end = timeit.default_timer()
+        print("Completed decision calculation in " + str(end-start) + "s")
         return graph
 
     def generate_average_execution_per_chain_type_over_time(self):
+        print("Generate average execution per chain type over time")
+        start = timeit.default_timer()
         # Generate average execution time per chain over time and return as JSON
         # Mostly some dataframe transformations, that's it
         #print(self.traces_df)
@@ -81,7 +94,7 @@ class StatisticsGenerator:
             print("Can't render")
             return ""
         time_df = self.traces_df[['trace_name', 'time:timestamp']]
-        time_df['time:timestamp'] = pd.to_datetime(time_df['time:timestamp'])
+        # time_df['time:timestamp'] = pd.to_datetime(time_df['time:timestamp'], utc=True)
         time_df = time_df.groupby(['trace_name']).agg(lambda x: (x.max(), x.min())).reset_index()
 
         time_df['start'] = time_df['time:timestamp'].transform(lambda x: x[0])
@@ -105,9 +118,13 @@ class StatisticsGenerator:
         fig.update_layout(legend=dict(orientation="h")
         )
         graph = pio.to_json(fig)
+        end = timeit.default_timer()
+        print("Completed decision calculation in " + str(end-start) + "s")
         return graph
 
     def generateTransitionInformation(self):
+        print("Generate transtion information")
+        start = timeit.default_timer()
         # Generate lifecycle:transition information
         result = {}
         for i in self.traces_df['concept:name'].unique():
@@ -122,6 +139,8 @@ class StatisticsGenerator:
                 'mostCommonTransition': mostCommonTransition
             }
         #print(result)
+        end = timeit.default_timer()
+        print("Completed Generate transiton information in " + str(end-start) + "s")
         return result
 
     def getListOfTransitions(self):

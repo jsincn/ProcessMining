@@ -1,3 +1,4 @@
+import timeit
 from pprint import pprint
 
 import pandas as pd
@@ -14,6 +15,8 @@ class DecisionMiner:
         self.L = L
 
     def calculateDecision(self):
+        print("Running decision calculation")
+        start = timeit.default_timer()
         trace_names = self.traces_df.trace_name.unique()
         self.traces_df = self.traces_df.fillna(0)
         self.L_EXTENDED = []
@@ -35,7 +38,7 @@ class DecisionMiner:
                 ds_helper[first_activity]['dataFrames'] = []
             ds_helper[first_activity]['options'].add(ds.loc[ds.index[1], 'concept:name'])
             ds_helper[first_activity]['dataFrames'].append(ds)
-        print(ds_helper)
+        #print(ds_helper)
 
         result = {}
         for first_activity in ds_helper.keys():
@@ -47,10 +50,10 @@ class DecisionMiner:
                 result[first_activity]['options'][option]['equals'] = {}
                 result[first_activity]['options'][option]['notequals'] = {}
                 for df in ds_helper[first_activity]['dataFrames']:
-                    print(df.loc[df.index[1], 'concept:name'])
+                    #print(df.loc[df.index[1], 'concept:name'])
                     if df.loc[df.index[1], 'concept:name'] == option:
                         options_df = pd.concat([options_df, df.iloc[[0]]])
-                print(options_df)
+                # print(options_df)
                 for col in options_df.columns:
                     if is_all_equal(options_df[col]):
                         result[first_activity]['options'][option]['equals'][col] = options_df[col].to_numpy()[0]
@@ -63,5 +66,7 @@ class DecisionMiner:
                 else:
                     common_attributes = set(result[first_activity]['options'][option]['equals'].keys())
             result[first_activity]['commonAttributes'] = list(common_attributes)
+        end = timeit.default_timer()
+        print("Completed decision calculation in " + str(end-start) + "s")
         return result
 
