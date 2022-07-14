@@ -2,7 +2,7 @@ from collections import Counter
 
 import pandas as pd
 import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 class HeuristicMiner:
 
@@ -112,6 +112,4 @@ class HeuristicMiner:
 
     def get_max_occurrences(self):
         tmp = self.succession_matrix.melt()
-        print(tmp)
-        print(tmp['value'].max())
         return tmp['value'].max()

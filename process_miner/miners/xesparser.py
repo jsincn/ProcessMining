@@ -56,9 +56,7 @@ class XESParser:
 
         startConcat = timeit.default_timer()
         traces_df = pd.concat(dataframes)
-        traces_df.info()
         traces_df['time:timestamp'] = pd.to_datetime(traces_df['time:timestamp'])
-        traces_df.info()
 
         endConcat = timeit.default_timer()
         self.logger.log("Concat time " + str(endConcat - startConcat))
