@@ -1,7 +1,7 @@
 import unittest
 
 from process_miner.logger import Logger
-from process_miner.miners.alpha import AlphaMiner
+from process_miner.miners.alphaplus import AlphaPlusMiner
 from process_miner.miners.xesparser import XESParser
 import pandas as pd
 from io import StringIO
@@ -9,11 +9,11 @@ from io import StringIO
 from tests.utils import utils
 
 
-class AlphaMinerTests(unittest.TestCase, utils):
+class AlphaPlusMinerTests(unittest.TestCase, utils):
 
     # Main test method
     def test(self):
-        testFiles = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7']
+        testFiles = ['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7-ap']
         for i in testFiles:
             self.runTest(i)
 
@@ -27,7 +27,7 @@ class AlphaMinerTests(unittest.TestCase, utils):
         traces_df = parser.get_parsed_logs()
 
         # Run alpha Miner
-        miner = AlphaMiner()
+        miner = AlphaPlusMiner()
         miner.run(traces_df)
         loc_csv = miner.get_location_csv()
         trans_csv = miner.get_transition_csv()
@@ -36,7 +36,7 @@ class AlphaMinerTests(unittest.TestCase, utils):
         loc_oracle_df = pd.read_csv(f"resources/{file}-loc-oracle.csv").sort_values(['loc', 'type']).reset_index(drop=True)
         trans_oracle_df = pd.read_csv(f"resources/{file}-trans-oracle.csv").sort_values(['source', 'target', 'type']).reset_index(drop=True)
 
-        # StringIO is used to load the csv String into pandas
+        # Sort for comparison - StringIO is used to load the csv String into pandas
         loc_actual_df = pd.read_csv(StringIO(loc_csv))
         trans_actual_df = pd.read_csv(StringIO(trans_csv))
 

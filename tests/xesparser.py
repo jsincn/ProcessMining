@@ -1,5 +1,6 @@
 import unittest
 
+from process_miner.logger import Logger
 from process_miner.miners.xesparser import XESParser
 
 
@@ -7,7 +8,7 @@ class TestXesParser(unittest.TestCase):
     def testL1(self):
         filepath = "resources/L1.xes"
         test_xml_string = self.load_test_file(filepath)
-        parser = XESParser()
+        parser = XESParser(Logger())
         parser.read_xes(test_xml_string)
         traces_df = parser.get_parsed_logs()
         l = self.generate_l(traces_df)
@@ -24,7 +25,7 @@ class TestXesParser(unittest.TestCase):
     def testL2(self):
         filepath = "resources/L2.xes"
         test_xml_string = self.load_test_file(filepath)
-        parser = XESParser()
+        parser = XESParser(Logger())
         parser.read_xes(test_xml_string)
         traces_df = parser.get_parsed_logs()
         l = self.generate_l(traces_df)
@@ -44,7 +45,7 @@ class TestXesParser(unittest.TestCase):
     def testL3(self):
         filepath = "resources/L3.xes"
         test_xml_string = self.load_test_file(filepath)
-        parser = XESParser()
+        parser = XESParser(Logger())
         parser.read_xes(test_xml_string)
         traces_df = parser.get_parsed_logs()
         l = self.generate_l(traces_df)
@@ -61,7 +62,7 @@ class TestXesParser(unittest.TestCase):
     def testL4(self):
         filepath = "resources/L4.xes"
         test_xml_string = self.load_test_file(filepath)
-        parser = XESParser()
+        parser = XESParser(Logger())
         parser.read_xes(test_xml_string)
         traces_df = parser.get_parsed_logs()
         l = self.generate_l(traces_df)

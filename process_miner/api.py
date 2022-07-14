@@ -20,6 +20,7 @@ def show():
 
 @api.route('upload', methods=['POST'])
 def upload_xes():
+    print("Received Request on /api/upload")
     if 'file' not in request.files:
         return "File not attached", 400
     file = request.files['file']
@@ -29,7 +30,11 @@ def upload_xes():
     mining_handler.run()
     if mining_handler.success:
         response = mining_handler.prepare_response()
-        #print(response)
+        print("Successfully completed request")
     else:
         response = mining_handler.logger.get_logs(), 500
+        print("Failed to complete request")
+        print("CAUSE")
+        print(response)
+        print("ENDCAUSE")
     return response

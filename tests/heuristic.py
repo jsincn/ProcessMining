@@ -1,6 +1,7 @@
 import unittest
 import pm4py
 
+from process_miner.logger import Logger
 from process_miner.miners.heuristic import HeuristicMiner
 from process_miner.miners.xesparser import XESParser
 from tests.utils import utils
@@ -17,7 +18,7 @@ class HeuristicTests(unittest.TestCase, utils):
         # load file from file path and parse
         filepath = f"resources/{file}.xes"
         test_xml_string = self.load_test_file(filepath)
-        parser = XESParser()
+        parser = XESParser(Logger())
         parser.read_xes(test_xml_string)
         traces_df = parser.get_parsed_logs()
 
