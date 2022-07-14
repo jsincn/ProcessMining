@@ -83,9 +83,11 @@ class AlphaPlusMiner:
                     l_1_l[l[0]]['after'].append(trans[1])
                 else:
                     direct_successions.append(trans)
+        if len(loop1) < 1:
+            for trans in direct_successions_dash:
+                direct_successions.append(trans)
 
         ### END OF PREPROCESSING FOR ALPHA PLUS MINER
-
 
         causalities = []
         for succession in direct_successions:
