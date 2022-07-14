@@ -82,7 +82,7 @@ class StatisticsGenerator:
             print("Can't render")
             return ""
         time_df = self.traces_df[['concept:name', 'time:timestamp', 'lifecycle:transition']]
-        time_df['timestamp'] = pd.to_datetime(time_df['time:timestamp'], utc=True)
+        # time_df['timestamp'] = pd.to_datetime(time_df['time:timestamp'], utc=True)
         fig = px.histogram(time_df, x="time:timestamp", color="concept:name")
         graph = pio.to_json(fig)
         end = timeit.default_timer()
@@ -117,8 +117,6 @@ class StatisticsGenerator:
         #time_df.info()
         time_df = time_df[['concept:name', 'start', 'delta_sec']].groupby(['concept:name', 'start']).median().reset_index()
 
-
-        # Create layout. With layout you can customize plotly plo
         fig = px.bar(time_df, x="start", y="delta_sec", color="concept:name", width=1600, height=600)
         fig.update_layout(legend=dict(orientation="h")
         )
