@@ -13,13 +13,16 @@ Setup and installation is easy:
 
 Currently a subset of standard process mining features are available in the tool. These are limited to:
 - Alpha Miner
+- Alpha Plus Miner
 - Heuristic Miner
 - General decision statistics
 - Transition heat maps
 - Occurrence counters
+- Median execution per project chain type over time
+- Occurrence over Time
 
 ## Usage
-The usage should be reasonably self explanatory from the UI, a built-in help is also available there.
+The usage should be reasonably self explanatory from the UI.
 
 ## Authors and acknowledgment
 The petrinet viewer is based on the Mobile Patent Suits Example by the D3 Team (Mike Bostock). 
