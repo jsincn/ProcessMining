@@ -1,7 +1,8 @@
 from collections import Counter
 
 import pandas as pd
-
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 class HeuristicMiner:
 
