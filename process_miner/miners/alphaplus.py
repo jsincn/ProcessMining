@@ -64,8 +64,8 @@ class AlphaPlusMiner:
             else:
                 loop1.append(trans)
 
-        print(direct_successions_dash)
-        print(loop1)
+        #print(direct_successions_dash)
+        #print(loop1)
 
         # Recalculate transitions without the loop 1 transitions
         # Create l_1_l list that holds all relevant information for each loop of length 1

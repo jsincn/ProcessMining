@@ -119,16 +119,24 @@
     </div>
     <div class="row gx-5">
         <div class="col-6">
-            <div id="mostCommonNode"></div>
-            <div id="successionHeatmap"></div>
+            <h3>Most Frequent Node</h3>
+            <div id="mostCommonNode"><i>No data available</i></div>
+            <h3>Succession Heatmap</h3>
+            <div id="successionHeatmap"><i>No data available</i></div>
         </div>
         <div class="col-6">
-            <div id="occurrenceHistogram"></div>
-
+            <h3>Occurrence over Time</h3>
+            <div id="occurrenceHistogram"><i>No data available</i></div>
+            <h3>Execution Logs</h3>
+            <div class="overflow-auto" style="height: 400px">
+                <pre><code id="logs"><i>No data available</i></code></pre>
+            </div>
         </div>
-        <div id="averageExecutionChainTypeTime"></div>
-
     </div>
+    <h3>Median execution time per chain type over time</h3>
+    <div id="averageExecutionChainTypeTime"><i>No data available</i></div>
+
+
 </div>
 
 
@@ -143,12 +151,31 @@
             <div class="modal-body">
                 <h5>Developed for the Practical Course "Introduction to Process Mining" at the Technical University of
                     Munich.</h5>
-                <p><small>Heuristic Net to Petrinet Conversion based on: 
-                    <small><br>Weijters, A. & Ribeiro, Joel. (2011). Flexible Heuristics Miner (FHM). Journal of Applied Physiology - J APPL PHYSIOL. 310-317. 10.1109/CIDM.2011.5949453.
-                    <br><br>Weijters, A. J. M. M., Wil M.P. van der Aalst and Ana K. A. de Medeiros. “Process mining with the HeuristicsMiner algorithm.” (2006).</small></small></p>
+                <p><small>Heuristic Net to Petrinet Conversion based on:
+                    <small><br>Weijters, A. & Ribeiro, Joel. (2011). Flexible Heuristics Miner (FHM). Journal of Applied
+                        Physiology - J APPL PHYSIOL. 310-317. 10.1109/CIDM.2011.5949453.
+                        <br><br>Weijters, A. J. M. M., Wil M.P. van der Aalst and Ana K. A. de Medeiros. “Process mining
+                        with the HeuristicsMiner algorithm.” (2006).</small></small></p>
                 <p>Developed by Jakob Steimle.</p>
                 <br><br>
                 <p>&copy; 2022 Jakob Steimle</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Error <span id="httpErrorCode"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body overflow-auto" style="height: 500px" id="errorTrace">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

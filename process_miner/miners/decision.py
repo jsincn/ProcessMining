@@ -9,13 +9,14 @@ def is_all_equal(series):
 
 class DecisionMiner:
 
-    def __init__(self, traces_df, L):
+    def __init__(self, traces_df, L, logger):
         self.L_EXTENDED = None
         self.traces_df = traces_df
         self.L = L
+        self.logger = logger
 
     def calculateDecision(self):
-        print("Running decision calculation")
+        self.logger.log("Running decision calculation")
         start = timeit.default_timer()
         trace_names = self.traces_df.trace_name.unique()
         self.traces_df = self.traces_df.fillna(0)
@@ -67,6 +68,6 @@ class DecisionMiner:
                     common_attributes = set(result[first_activity]['options'][option]['equals'].keys())
             result[first_activity]['commonAttributes'] = list(common_attributes)
         end = timeit.default_timer()
-        print("Completed decision calculation in " + str(end-start) + "s")
+        self.logger.log("Completed decision calculation in " + str(end-start) + "s")
         return result
 

@@ -29,11 +29,17 @@ $(document).ready(function () {
                 data: fd,
                 contentType: false,
                 processData: false,
+                error: function (response) {
+                    console.log(response);
+                    $('#errorTrace').html(response.responseText);
+                    $('#httpErrorCode').html(response.status + ": " + response.statusText);
+                    $('#errorModal').modal('show');
+}               ,
                 success: function (response) {
                     window.legend = [];
                     window.nodeStats = response.nodeStats;
                     window.decisionInformation = response.decisionInformation;
-                    console.log(response);
+                    d3.selectAll("#logs").html(response.logs);
                     if (response.algorithm === "Alpha Miner" || response.algorithm === "Alpha Plus Miner") {
                         // Run Alpha Miner Logic
                         window.transitionList = response.transitionList;

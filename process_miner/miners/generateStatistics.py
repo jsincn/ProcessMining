@@ -11,7 +11,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 class StatisticsGenerator:
 
-    def __init__(self, traces_df, L):
+    def __init__(self, traces_df, L, logger):
         """
         :param traces_df: pd.DataFrame
         :param L: List
@@ -23,18 +23,23 @@ class StatisticsGenerator:
             layout_colorway=['#FFC107', '#DB4437', '#2980b9', '#8e44ad', '#2c3e50', '#7f8c8d', '#c0392b']
         )
         pio.templates.default = "ppm"
+        self.logger = logger
 
     def generate_most_common_step(self):
+        self.logger.log("Generate Most Common Step Graph")
+        start = timeit.default_timer()
         # Generates the most common step statistics and returns it as JSON
         proc_df = self.traces_df[['concept:name']]
         proc_df = proc_df.assign(count=1)
         proc_df = proc_df.groupby("concept:name").sum().reset_index()
         fig = px.bar(proc_df, x="concept:name", y="count")
         graph = pio.to_json(fig)
+        end = timeit.default_timer()
+        self.logger.log("Generated most common step Graph in " + str(end-start) + "s")
         return graph
 
     def generate_succession_heatmap(self):
-        print("Generate Succession Heatmap")
+        self.logger.log("Generate Succession Heatmap")
         start = timeit.default_timer()
         # Generates the succession heatmap and returns it as json
         direct_successions_hm = []
@@ -66,11 +71,11 @@ class StatisticsGenerator:
             colorscale='Inferno'))
         graph = pio.to_json(fig)
         end = timeit.default_timer()
-        print("Completed generate heatmap in " + str(end-start) + "s")
+        self.logger.log("Completed Generate Succession Heatmap in " + str(end-start) + "s")
         return graph
 
     def generate_occurrence_histogram(self):
-        print("Generate Occurrence Histogram")
+        self.logger.log("Generate Occurrence Histogram")
         start = timeit.default_timer()
         # Generate occurrence histogram and return as JSON using the ploty histogram function
         if not {'concept:name', 'time:timestamp', 'lifecycle:transition'}.issubset(self.traces_df.columns):
@@ -81,11 +86,11 @@ class StatisticsGenerator:
         fig = px.histogram(time_df, x="time:timestamp", color="concept:name")
         graph = pio.to_json(fig)
         end = timeit.default_timer()
-        print("Completed decision calculation in " + str(end-start) + "s")
+        self.logger.log("Completed Generate Occurrence Histogram in " + str(end-start) + "s")
         return graph
 
     def generate_average_execution_per_chain_type_over_time(self):
-        print("Generate average execution per chain type over time")
+        self.logger.log("Generate average execution per chain type over time")
         start = timeit.default_timer()
         # Generate average execution time per chain over time and return as JSON
         # Mostly some dataframe transformations, that's it
@@ -119,11 +124,11 @@ class StatisticsGenerator:
         )
         graph = pio.to_json(fig)
         end = timeit.default_timer()
-        print("Completed decision calculation in " + str(end-start) + "s")
+        self.logger.log("Completed generate average execution per chain type over time in " + str(end-start) + "s")
         return graph
 
     def generateTransitionInformation(self):
-        print("Generate transtion information")
+        self.logger.log("Generate transtion information")
         start = timeit.default_timer()
         # Generate lifecycle:transition information
         result = {}
@@ -140,7 +145,7 @@ class StatisticsGenerator:
             }
         #print(result)
         end = timeit.default_timer()
-        print("Completed Generate transiton information in " + str(end-start) + "s")
+        self.logger.log("Completed generate transiton information in " + str(end-start) + "s")
         return result
 
     def getListOfTransitions(self):
