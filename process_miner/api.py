@@ -31,5 +31,5 @@ def upload_xes():
         response = mining_handler.prepare_response()
         #print(response)
     else:
-        response = {}
+        response = mining_handler.logger.get_logs(), 500
     return response

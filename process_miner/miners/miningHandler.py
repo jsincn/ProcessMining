@@ -36,6 +36,10 @@ class MiningHandler:
                 # filter lifecycle transition
                 if self.lifecycleTransition != "":
                     traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
+                if len(traces_df.index) == 0:
+                    self.logger.logError('emptyTraceDF', self.lifecycleTransition + "\" is probably invalid!")
+                    self.success = False
+                    return
                 self.logger.log("Starting Alpha Miner")
                 minerStart = timeit.default_timer()
                 self.miner = AlphaMiner()
@@ -52,6 +56,10 @@ class MiningHandler:
                 # filter lifecycle transition
                 if self.lifecycleTransition != "":
                     traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
+                if len(traces_df.index) == 0:
+                    self.logger.logError('emptyTraceDF', self.lifecycleTransition + "\" is probably invalid!")
+                    self.success = False
+                    return
                 self.logger.log("Starting Alpha Plus Miner")
                 minerStart = timeit.default_timer()
                 self.miner = AlphaPlusMiner()
@@ -69,6 +77,10 @@ class MiningHandler:
                 # filter lifecycle transition
                 if self.lifecycleTransition != "":
                     traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
+                if len(traces_df.index) == 0:
+                    self.logger.logError('emptyTraceDF', self.lifecycleTransition + "\" is probably invalid!")
+                    self.success = False
+                    return
                 self.logger.log("Starting Heuristic Miner")
                 minerStart = timeit.default_timer()
                 self.miner = HeuristicMiner()
@@ -104,7 +116,7 @@ class MiningHandler:
                         'alphabet': self.miner.get_alphabet(),
                         'start': self.miner.get_start(),
                         'end': self.miner.get_end(),
-                        'maxOccurrences': 100,
+                        'maxOccurrences': int(self.miner.get_max_occurrences()),
                         'filename': secure_filename(self.file.filename),
                         'algorithm': "Heuristic Miner", 'cache': False, 'timestamp': datetime.now(),
                         'l': self.miner.get_l(),
