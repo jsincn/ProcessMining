@@ -167,26 +167,27 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
                 //     continue;
                 // }
                 let components = key.split(",");
-                console.log("Analyzing " + letter + " key " + key + " outputs: " + components)
+                // console.log("Analyzing " + letter + " key " + key + " outputs: " + components)
                 // if (components.length > 1) {
                 //     components = components.filter(function (a) {
                 //             return !(a === letter);
                 //         }
                 //     )
                 // }
-                console.log("Analyzing " + letter + " key " + key + " sanitized outputs: " + components)
+                // console.log("Analyzing " + letter + " key " + key + " sanitized outputs: " + components)
 
                 if (components.length < 2 && components.length > 0 && key.length > 0) {
+                    // Simple XOR Split
                     components = components.filter(function (value) {
                         return !(value === key) || !(value === letter);
                     })
                     out_str += key + "-"
                     sum += outputs[letter][keys[0]];
                 } else if (components.length > 1) {
+                    // a further and split is necessary, adding 'additional' transitions
                     out_str += "andsplit" + components.join("/") + "-";
                     locations += "andsplit" + components.join("/") + ",transH\n"
                     for (const c of components) {
-
                         places_simple.push("andsplit" + components.join("/") + "|" + c + "|" + 0)
                     }
                     sum += outputs[letter][keys[0]];
@@ -196,17 +197,18 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
             out_str += "|";
             out_str += 0;
             places_xor_split.push(out_str);
-            console.log("out_str" + out_str)
+            // console.log("out_str" + out_str)
         }
     }
-    console.log(places_xor_split)
+    // console.log(places_xor_split)
 
 
     for (const letter of alphabet) {
 
+        // Removing loops of length 1 - can cause issues when directly rejoining a split
         keys = Object.keys(inputs[letter]);
         keys = keys.map(function (a) {
-                console.log("filtering " + a)
+                // console.log("filtering " + a)
                 let cmp = a.split(",");
 
                 cmp = cmp.filter(r => r !== letter);
@@ -215,7 +217,7 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
             }
         );
         keys = keys.filter(a => a !== "");
-        console.log("Analyzing " + letter + " with cleaned inputs: " + keys)
+        // console.log("Analyzing " + letter + " with cleaned inputs: " + keys)
 
         if (keys.length === 1) {
             // No XOR Join Necessary
@@ -230,14 +232,14 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
                 // }
 
                 let components = key.split(",");
-                console.log("Analyzing " + letter + " key " + key + " inputs: " + components)
+                // console.log("Analyzing " + letter + " key " + key + " inputs: " + components)
                 // if (components.length > 1) {
                 //     components = components.filter(function (a) {
                 //             return !(a === letter);
                 //         }
                 //     )
                 // }
-                console.log("Analyzing " + letter + " key " + key + " sanitized inputs: " + components)
+                // console.log("Analyzing " + letter + " key " + key + " sanitized inputs: " + components)
                 if (components.length < 2 && components.length > 0 && key.length > 0) {
                     // Join for just XOR of individual states
                     // components = components.filter(function (value) {
@@ -258,6 +260,7 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
                         places_simple.push(c + "|" + "andjoin" + components.join("/") + "|" + 1)
                     }
                     sum += inputs[letter][keys[0]];
+                    // Remove joined transitions from the list of sequence patterns
                     places_simple = places_simple.filter(function (value, index, array) {
                         let parts = value.split("|");
                         let dst_cmp = parts[1].split("-");
@@ -270,7 +273,7 @@ function updateHeuristicDisplay(dependencyMeasureMatrix, successionMatrix, trace
                 in_str += "|" + letter + "|" + 1;
                 places_xor_join.push(in_str);
             }
-            console.log("in_str" + in_str)
+            // console.log("in_str" + in_str)
         }
     }
     // console.log(places_simple)

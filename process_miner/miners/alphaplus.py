@@ -1,4 +1,3 @@
-import pandas as pd
 from itertools import chain, combinations
 import itertools
 

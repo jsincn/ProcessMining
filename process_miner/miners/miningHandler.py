@@ -28,68 +28,43 @@ class MiningHandler:
 
     def run(self):
         # runs the algorithm
+        # Time for the overall execution time
         self.start = timeit.default_timer()
-        if self.algorithm == "Alpha Miner":
-            parser = XESParser(self.logger)
-            if parser.read_xes(self.file.read()):
-                traces_df = parser.get_parsed_logs()
-                # filter lifecycle transition
-                if self.lifecycleTransition != "":
-                    traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
-                if len(traces_df.index) == 0:
-                    self.logger.logError('emptyTraceDF', self.lifecycleTransition + "\" is probably invalid!")
-                    self.success = False
-                    return
-                self.logger.log("Starting Alpha Miner")
-                minerStart = timeit.default_timer()
-                self.miner = AlphaMiner()
-                self.miner.run(traces_df)
-                minerStop = timeit.default_timer()
-                self.logger.log("Completed alpha miner in " + str(minerStop-minerStart) + "s")
-                self.stats = StatisticsGenerator(traces_df, self.miner.L, self.logger)
-                self.decisions = DecisionMiner(traces_df, self.miner.L, self.logger)
-                self.success = True
-        elif self.algorithm == "Alpha Plus Miner":
-            parser = XESParser(self.logger)
-            if parser.read_xes(self.file.read()):
-                traces_df = parser.get_parsed_logs()
-                # filter lifecycle transition
-                if self.lifecycleTransition != "":
-                    traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
-                if len(traces_df.index) == 0:
-                    self.logger.logError('emptyTraceDF', self.lifecycleTransition + "\" is probably invalid!")
-                    self.success = False
-                    return
-                self.logger.log("Starting Alpha Plus Miner")
-                minerStart = timeit.default_timer()
-                self.miner = AlphaPlusMiner()
-                self.miner.run(traces_df)
-                minerStop = timeit.default_timer()
-                self.logger.log("Completed alpha plus miner in " + str(minerStop-minerStart) + "s")
-                self.stats = StatisticsGenerator(traces_df, self.miner.L, self.logger)
-                self.decisions = DecisionMiner(traces_df, self.miner.L, self.logger)
-                self.success = True
-        elif self.algorithm == "Heuristic Miner":
-            # Run the Heuristic Miner
-            parser = XESParser(self.logger)
-            if parser.read_xes(self.file.read()):
-                traces_df = parser.get_parsed_logs()
-                # filter lifecycle transition
-                if self.lifecycleTransition != "":
-                    traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
-                if len(traces_df.index) == 0:
-                    self.logger.logError('emptyTraceDF', self.lifecycleTransition + "\" is probably invalid!")
-                    self.success = False
-                    return
-                self.logger.log("Starting Heuristic Miner")
-                minerStart = timeit.default_timer()
-                self.miner = HeuristicMiner()
-                self.miner.run(traces_df)
-                minerStop = timeit.default_timer()
-                self.logger.log("Completed heuristic miner in " + str(minerStop-minerStart) + "s")
-                self.stats = StatisticsGenerator(traces_df, self.miner.L, self.logger)
-                self.decisions = DecisionMiner(traces_df, self.miner.L, self.logger)
-                self.success = True
+        parser = XESParser(self.logger)
+        if parser.read_xes(self.file.read()):
+            traces_df = parser.get_parsed_logs()
+            # filter lifecycle transition
+            if self.lifecycleTransition != "":
+                traces_df = traces_df[traces_df['lifecycle:transition'] == self.lifecycleTransition]
+            if len(traces_df.index) == 0:
+                self.logger.logError('emptyTraceDF', self.lifecycleTransition + "\" is probably invalid!")
+                self.success = False
+                return
+            if self.algorithm == "Alpha Miner":
+                    self.logger.log("Starting Alpha Miner")
+                    minerStart = timeit.default_timer()
+                    self.miner = AlphaMiner()
+                    self.miner.run(traces_df)
+                    minerStop = timeit.default_timer()
+                    self.logger.log("Completed alpha miner in " + str(minerStop-minerStart) + "s")
+            elif self.algorithm == "Alpha Plus Miner":
+                    self.logger.log("Starting Alpha Plus Miner")
+                    minerStart = timeit.default_timer()
+                    self.miner = AlphaPlusMiner()
+                    self.miner.run(traces_df)
+                    minerStop = timeit.default_timer()
+                    self.logger.log("Completed alpha plus miner in " + str(minerStop-minerStart) + "s")
+            elif self.algorithm == "Heuristic Miner":
+                # Run the Heuristic Miner
+                    self.logger.log("Starting Heuristic Miner")
+                    minerStart = timeit.default_timer()
+                    self.miner = HeuristicMiner()
+                    self.miner.run(traces_df)
+                    minerStop = timeit.default_timer()
+                    self.logger.log("Completed heuristic miner in " + str(minerStop-minerStart) + "s")
+            self.stats = StatisticsGenerator(traces_df, self.miner.L, self.logger)
+            self.decisions = DecisionMiner(traces_df, self.miner.L, self.logger)
+            self.success = True
 
     def prepare_response(self):
         if self.algorithm == "Alpha Miner" or self.algorithm == "Alpha Plus Miner":

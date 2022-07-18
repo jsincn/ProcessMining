@@ -50,18 +50,12 @@ function chart(data, width, height, types, color, location, drag, linkArc) {
         })
         .call(drag(simulation));
 
-    // node.append("circle")
-    //     .attr("stroke", "white")
-    //     .attr("stroke-width", 1.5)
-    //     .attr("r", 4);
-
 
     simulation.on("tick", () => {
         link.attr("d", linkArc);
         node.attr("transform", d => `translate(${d.x},${d.y})`);
     });
 
-    // invalidation.then(() => simulation.stop());
 
     return svg.node();
 }
@@ -79,6 +73,7 @@ function linkArc(d) {
     //const r = 0;
     if (d.target.type === "trans") {
         // Calculate the intercept between an imaginary line joining the two points and the edge of the transition square
+        // Can sometimes lead to weird behavior
         alpha = Math.tan((d.source.y - d.target.y) / (d.source.x - d.target.x))
         if (d.source.x <= d.target.x) {
             qx = d.target.x - 5
@@ -93,10 +88,11 @@ function linkArc(d) {
         // Calculate Radius for curved lines
         const r = Math.hypot(qx - d.source.x, qy - d.source.y);
 
+        // Returns an arc string for d3.js
         return `
         M${d.source.x},${d.source.y}
         A${r},${r} 0 0,1 ${qx},${qy}
-  `;
+        `;
 
     }
     // Calculate Radius for curved lines
@@ -104,7 +100,7 @@ function linkArc(d) {
     return `
     M${d.source.x},${d.source.y}
     A${r},${r} 0 0,1 ${d.target.x},${d.target.y}
-  `;
+    `;
 }
 
 
@@ -148,7 +144,6 @@ function loadPetrinet(locations, transitions) {
     //console.log(loc_raw)
 
     let types = Array.from(new Set(links.map(d => d.type)))
-    let nodes = ['']
     let data = ({nodes: Array.from(loc_raw, (i) => ({id: i['loc'], type: i['type']})), links})
     let height = 600
     let color = d3.scaleOrdinal(types, d3.schemeCategory10)
@@ -238,8 +233,6 @@ function loadPetrinet(locations, transitions) {
             // Heuristic Miner Result
             decisionInfoHeuristicMiner(nodeId, div, d);
         }
-
-
     }).on('mouseout', function (d, i) {
         d3.select(this).transition()
             .duration('50')
@@ -248,7 +241,6 @@ function loadPetrinet(locations, transitions) {
             .duration('50')
             .style("opacity", 0);
     });
-    ;
 
     // Format start and end node
     d3.selectAll(".se").append("circle")

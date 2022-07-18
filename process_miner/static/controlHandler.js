@@ -1,6 +1,5 @@
-// Based on the solution by Vasyl Vaskivskyi
+// SVG DownloadBased on the solution by Vasyl Vaskivskyi
 // https://stackoverflow.com/questions/23218174/how-do-i-save-export-an-svg-file-after-creating-an-svg-with-d3-js-ie-safari-an
-
 $("#svg_download").click(function () {
     console.log("Saving File");
     var svgData = $("#svgCanvas").html();

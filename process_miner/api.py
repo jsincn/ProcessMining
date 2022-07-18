@@ -1,14 +1,8 @@
-from datetime import datetime
-
 from flask import (
     Blueprint, request
 )
-from werkzeug.utils import secure_filename
-import timeit
 
 from process_miner.miners.miningHandler import MiningHandler
-from process_miner.miners.xesparser import XESParser
-from process_miner.miners.alpha import AlphaMiner
 
 api = Blueprint('api', __name__, template_folder='templates', url_prefix="/api")
 

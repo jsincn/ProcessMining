@@ -1,4 +1,7 @@
 function decisionInfoHeuristicMiner(nodeId, div, d) {
+    // show decision information for the heuristic miner
+    // Reason for the split in function is that the heuristic miner contains the transition names in the place names
+    // while the alpha miner does not.
     let decisionPoint = nodeId.split("|")[1].split("-").length > 1;
     if (decisionPoint) {
         let source_node = nodeId.split("|")[0];
@@ -14,6 +17,9 @@ function decisionInfoHeuristicMiner(nodeId, div, d) {
 }
 
 function decisionInfoAlphaMiner(nodeId, div, d) {
+    // show decision information for the alpha/alpha+ miner
+    // Reason for the split in function is that the heuristic miner contains the transition names in the place names
+    // while the alpha miner does not.
     let source_nodes = [];
     let destination_nodes = [];
     for (const trans of window.transitionList) {
@@ -38,6 +44,7 @@ function decisionInfoAlphaMiner(nodeId, div, d) {
 }
 
 function generateDecisionDIV(source_node, div, d) {
+    // Generates the decision DIV (basically the table of attributes)
     let options = Object.keys(window.decisionInformation[source_node]['options']);
     let decisionString = "Decision Options: <br><table  class=\"table\">";
     decisionString += "<tr>";
