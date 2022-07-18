@@ -1,7 +1,6 @@
 from itertools import chain, combinations
 import itertools
 
-
 def powerset(iterable: object) -> object:
     """powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)
     :param iterable:
@@ -51,6 +50,8 @@ class AlphaPlusMiner:
                     direct_successions.append((trace[i], trace[i + 1]))
 
         ### PREPROCESSING FOR ALPHA PLUS MINER
+        # Based on https://docs.google.com/document/d/1JtuECbGZ3DusNpmBZhXeq8R_UPCRU5V7NG8GL17h1aA/pub BPMProject and
+        # https://github.com/eadordzhiev/AlphaPlusAlgorithm/blob/master/AlphaMinerTest1/AlphaMiner.cs
 
         # Remove all loops of length 1
         # Identify loop 1 transitions
@@ -86,17 +87,32 @@ class AlphaPlusMiner:
             for trans in direct_successions_dash:
                 direct_successions.append(trans)
 
-        ### END OF PREPROCESSING FOR ALPHA PLUS MINER
+        # calculate subsequence aba: a △ b ⟺ ...aba... exists
+        subsequence = []
+        for trace in self.L:
+            for i in range(len(trace) - 2):
+                if trace[i] == trace[i + 2]:
+                    subsequence.append((trace[i], trace[i + 1]))
+        subsequence = list(set(subsequence))
 
+        # calculate subsequence aba and bab: a ♢ b ⟺ ...aba... and ...bab... exist
+        both_sequence = []
+        for (a, b) in subsequence:
+            if (b, a) in subsequence:
+                both_sequence.append((a, b))
+
+        # Different Causality and Parallel calculation
         causalities = []
         for succession in direct_successions:
-            if (succession[1], succession[0]) not in direct_successions:
+            if (succession[1], succession[0]) not in direct_successions or (succession[1], succession[0]) in both_sequence:
                 causalities.append(succession)
 
         parallels = []
         for succession in direct_successions:
-            if (succession[1], succession[0]) in direct_successions:
+            if (succession[1], succession[0]) in direct_successions and (succession[0], succession[1]) not in both_sequence:
                 parallels.append(succession)
+
+        ### END OF PREPROCESSING FOR ALPHA PLUS MINER
 
         choices = []
         alphabet = traces_df["concept:name"].unique()
@@ -118,6 +134,8 @@ class AlphaPlusMiner:
             self.TO.append(i[len(i) - 1])
         self.TO = list(set(self.TO))
 
+
+        # Find XL (Step 4)
         side_combinations = list(powerset(alphabet))
         self.combinations = list(itertools.product(side_combinations, side_combinations))
 
@@ -144,6 +162,7 @@ class AlphaPlusMiner:
             if valid:
                 self.XL.append((A, B))
 
+        # Find YL (Step 5)
         for combination in self.XL:
             valid = True
             for comparison in self.XL:
@@ -155,6 +174,9 @@ class AlphaPlusMiner:
             if valid:
                 self.YL.append(combination)
 
+        # PL (Step 6) is omitted here, as that is done during CSV Creation
+
+        # Find FL (Step 7)
         for combination in self.YL:
             # print(combination)
             for a in combination[0]:
