@@ -191,9 +191,10 @@ class AlphaPlusMiner:
             index = -1
             # Identify the place to 'dock onto' - i.e. the place where we removed the length 1 loop from
             for i, item in enumerate(self.XL):
-                if element['before'][0] in item[0] and element['after'][0] in item[1]:
-                    index = i
-                    break
+                if len(element['before']) > 0 and len(element['after']) > 0:
+                    if element['before'][0] in item[0] and element['after'][0] in item[1]:
+                        index = i
+                        break
             if index == -1:
                 continue
             else:
