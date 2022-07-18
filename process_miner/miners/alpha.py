@@ -83,6 +83,7 @@ class AlphaMiner:
         side_combinations = list(powerset(alphabet))
         self.combinations = list(itertools.product(side_combinations, side_combinations))
 
+        # Find XL (step 4)
         for combination in self.combinations:
             A = combination[0]
             B = combination[1]
@@ -106,10 +107,10 @@ class AlphaMiner:
             if valid:
                 self.XL.append((A, B))
 
+        # Find YL (Step 5)
         for combination in self.XL:
             valid = True
             for comparison in self.XL:
-
                 if set(combination[0]).issubset(comparison[0]) and set(combination[1]).issubset(comparison[1]):
                     if combination != comparison:
                         valid = False
@@ -117,6 +118,9 @@ class AlphaMiner:
             if valid:
                 self.YL.append(combination)
 
+        # PL (Step 6) is omitted here, as that is done during CSV Creation
+
+        # Find FL (Step 7)
         for combination in self.YL:
             # print(combination)
             for a in combination[0]:
