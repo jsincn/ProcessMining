@@ -32,4 +32,4 @@ The original example is available under https://observablehq.com/@d3/mobile-pate
 Currently no license has been selected.
 
 ## Project status
-In development.
+Completed. Bug fixes or similar may be done on a best effort basis.
